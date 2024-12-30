@@ -10,8 +10,12 @@ classdef Game
         WildlifeTokens WildlifeToken % Array of WildlifeToken
         NatureTokens uint8 % Array of size NumWildlifeTokens, value is status
 
-        TurnCount % How many turns has the game gone?
-        PlayerTurn % Who's turn is it?
+        CenterTileIdx uint8 % Idx in 'HabitatTiles' of center tiles (in center order)
+        CenterTokenIdx uint8 % Idx in 'NatureTokens' of center tiles (in center order)
+        % 0 indicates empty center
+
+        TurnCount uint8 % How many turns has the game gone?
+        PlayerTurn uint8 % Who's turn is it?
         CurrentScores table % Scores for current turn
     end
 
@@ -23,25 +27,16 @@ classdef Game
             % Get parameter data store
             obj.GameParameters = GameParameters();
 
-            % Populate empty player
-            obj.Players = Player.empty;
-
             % Populate Starter Habitat Tiles
             obj.StarterHabitatTiles = initStarterTiles(obj.GameParameters);
-
-            % Populate Habitat Tiles
-            obj.HabitatTiles = initHabitatTiles(obj.GameParameters);
-
-            % Populate Wildlife Tokens
-            obj.WildlifeTokens = initWildlifeTokens(obj.GameParameters);
-
-            % Populate Nature Tokens
-            obj.NatureTokens = initNatureTokens(obj.GameParameters);
         end
 
         function obj = startNewGame(obj, nPlayers)
             %STARTNEWGAME Summary of this method goes here
             %   Detailed explanation goes here
+
+            % Reset players and tokens
+            obj = clearPlayersAndTokens(obj);
 
             % Select subset of all habitat tiles to make 'Hidden'
             numInPlayTiles = obj.GameParameters.habitatTilesForNPlayers(nPlayers);
@@ -68,20 +63,24 @@ classdef Game
 
             % Center Habitat Tiles and Wildlife tokens
             idx = sort(randperm(numInPlayTiles, obj.GameParameters.CenterTiles));
-            inPlayCount = 0;
+            inPlayCount = 0; centerIdx = 1;
             for i = 1:length(obj.HabitatTiles)
                 if (obj.HabitatTiles(i).Status == StatusEnum.Hidden)
                     inPlayCount = inPlayCount + 1;
-                end
-
-                if any(inPlayCount == idx)
-                    obj.HabitatTiles(i).Status = StatusEnum.InCenter;
+                    if any(inPlayCount == idx)
+                        obj.HabitatTiles(i).Status = StatusEnum.InCenter;
+                        obj.CenterTileIdx(centerIdx) = i;
+                        centerIdx = centerIdx + 1;
+                    end
                 end
             end
 
             idx = randperm(length(obj.WildlifeTokens), obj.GameParameters.CenterTiles);
+            centerIdx = 1;
             for i = idx
                 obj.WildlifeTokens(i).Status = StatusEnum.InCenter;
+                obj.CenterTokenIdx(centerIdx) = i;
+                centerIdx = centerIdx + 1;
             end
 
             % Start game
@@ -90,10 +89,11 @@ classdef Game
             obj.CurrentScores = obj.GameParameters.initScoreTable(obj.Players);
             fprintf('Game started!\n');
 
-            obj.Players(obj.PlayerTurn) = obj.Players(obj.PlayerTurn).getAvailableActions;
+            [obj, obj.Players(obj.PlayerTurn)] = ...
+                obj.Players(obj.PlayerTurn).getAvailableActions(obj);
         end
 
-        function playerAction(obj, action)
+        function obj = playerAction(obj, action)
             %PLAYERACTION Summary of this method goes here
             % Callback triggered by a player selecting a move
 
@@ -101,10 +101,10 @@ classdef Game
 
             if ismember(action, currPlayer.AvailableActions)
                 % Execute selected move
-                currPlayer.execute(action);
+                [obj, currPlayer] = MovesEnum.executeMove(obj, currPlayer, action);
 
                 % Check if player can continue turn, or if game is over
-                currPlayer = currPlayer.getAvailableActions;
+                [obj, currPlayer] = currPlayer.getAvailableActions(obj);
                 turnOver = false; gameOver = false;
                 if countTiles(obj, StatusEnum.Hidden) == 0
                     gameOver = true;
@@ -113,25 +113,26 @@ classdef Game
                 end
 
                 if turnOver || gameOver
+                    % Reset once-per-turn actions
+                    obj.Players(obj.PlayerTurn).UsedVoluntaryOverpopulationWipe = false;
+
                     % Update player's score
-                    % Where to put this method... here? 
-                    otherPlayers = obj.Players;
-                    otherPlayers(obj.PlayerTurn) = [];
-                    obj.Players(obj.PlayerTurn) = ...
-                        updateScore(obj.Players(obj.PlayerTurn), obj.GameParameters, otherPlayers);
+
                 end
 
                 if gameOver
                     % Print scores, announce winner
                 elseif turnOver
                     % Replace Center
-                    randTile = HabitatTile();
+                    tileIdx = randi(length(obj.HabitatTiles));
+                    randTile = obj.HabitatTiles(tileIdx);
                     while (randTile.Status ~= StatusEnum.Hidden)
                         tileIdx = randi(length(obj.HabitatTiles));
                         randTile = obj.HabitatTiles(tileIdx);
                     end
 
-                    randToken = [];
+                    tokenIdx = randi(length(obj.WildlifeTokens));
+                    randToken = obj.WildlifeTokens(tokenIdx);
                     while (randToken.Status ~= StatusEnum.Hidden)
                         tokenIdx = randi(length(obj.WildlifeTokens));
                         randToken = obj.WildlifeTokens(tokenIdx);
@@ -140,21 +141,53 @@ classdef Game
                     obj.HabitatTiles(tileIdx).Status = StatusEnum.InCenter;
                     obj.WildlifeTokens(tokenIdx).Status = StatusEnum.InCenter;
 
+                    obj.CenterTileIdx(obj.CenterTileIdx == 0) = tileIdx;
+                    obj.CenterTokenIdx(obj.CenterTokenIdx == 0) = tokenIdx;
+
                     % Prepare for next player's turn
                     obj.TurnCount = obj.TurnCount + 1;
                     obj.PlayerTurn = mod(obj.PlayerTurn, length(obj.Players)) + 1;
                     fprintf('Player %d''s Turn\n', obj.PlayerTurn);
-                    obj.Players(obj.PlayerTurn) = obj.Players(obj.PlayerTurn).getAvailableActions;
+                    [obj, obj.Players(obj.PlayerTurn)] = ...
+                        obj.Players(obj.PlayerTurn).getAvailableActions(obj);
                 else
                     fprintf('Player %d Continues Turn\n', obj.PlayerTurn);
                 end
+                obj.Players(obj.PlayerTurn) = currPlayer;
             else
                 fprintf('Action not available to player!');
             end
         end
-    end
 
-    methods (Access = private)
+        function nAnimals = countSameCenterAnimals(obj)
+            % Count number of 'same animals' in the center. For overpopulation
+            % purposes
+
+            % Create array of center token animals
+            tokenIndexes = obj.CenterTokenIdx;
+            centerTokenAnimals = AnimalEnum.empty;
+            idx = 1;
+            for i = tokenIndexes
+                centerTokenAnimals(idx) = obj.WildlifeTokens(i).Animal;
+                idx = idx + 1;
+            end
+
+            % Count largest number of repeated animals
+            nAnimals = 1;
+            for i = 1:length(centerTokenAnimals)
+                currAnimal = centerTokenAnimals(i);
+                animalCount = 1;
+                for j = (i+1):length(centerTokenAnimals)
+                    if centerTokenAnimals(j) == currAnimal
+                        animalCount = animalCount + 1;
+                    end
+                end
+                if animalCount > nAnimals
+                    nAnimals = animalCount;
+                end
+            end
+        end
+
         function nTiles = countTiles(obj, status)
             %COUNTTILES How many tiles of a particular status exist
             %   Detailed explanation goes here
@@ -175,6 +208,22 @@ classdef Game
                     nTokens = nTokens + 1;
                 end
             end
+        end
+    end
+
+    methods (Access = private)
+        function obj = clearPlayersAndTokens(obj)
+            % Populate empty player
+            obj.Players = Player.empty;
+
+            % Populate Habitat Tiles
+            obj.HabitatTiles = initHabitatTiles(obj.GameParameters);
+
+            % Populate Wildlife Tokens
+            obj.WildlifeTokens = initWildlifeTokens(obj.GameParameters);
+
+            % Populate Nature Tokens
+            obj.NatureTokens = initNatureTokens(obj.GameParameters);
         end
     end
 end
