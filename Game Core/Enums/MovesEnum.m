@@ -59,23 +59,29 @@ classdef MovesEnum < uint8
             end
         end
 
-        function [gameObj, playerObj] = executeMove(gameObj, playerObj, move)
+        function [gameObj, playerObj] = executeMove(gameObj, playerObj, move, moveMetadata)
             switch move
                 case MovesEnum.OverpopulationWipe
                     gameObj = MovesEnum.overpopulationWipe(gameObj);
                     playerObj.UsedVoluntaryOverpopulationWipe = true;
 
                 case MovesEnum.SpendNatureToken
-                    spendNatureToken(player);
+                    [gameObj, playerObj] = spendNatureToken(playerObj);
 
                 case MovesEnum.SelectTile
-                    selectHabitatTile();
+                    tileCenterIdx = moveMetadata;
+                    playerObj = selectHabitatTile(playerObj, tileCenterIdx);
 
                 case MovesEnum.SelectToken
-                    selectWildlifeToken();
+                    tokenCenterIdx = moveMetadata;
+                    playerObj = selectWildlifeToken(playerObj, tokenCenterIdx);
 
                 case MovesEnum.RotateTile
-                    rotateHabitatTile(player, HabitatTile);
+                    tileCenterIdx = moveMetadata;
+                    tileGameIdx = gameObj.CenterTileIdx(tileCenterIdx);
+                    habitatTile = gameObj.HabitatTiles(tileGameIdx);
+                    habitatTile = rotateHabitatTile(habitatTile);
+                    gameObj.HabitatTiles(tileGameIdx) = habitatTile;
 
                 case MovesEnum.PlaceTile
                     placeHabitatTile(player,HabitatTile);
@@ -152,28 +158,42 @@ classdef MovesEnum < uint8
             end
         end
 
-        function spendNatureToken(player)
+        function [gameObj, playerObj] = spendNatureToken(gameObj, playerObj)
             % Option 1: Decouple habitat tile and wildlife token selection
 
-            % TODO - player has 'coupledTileToken' flag that this sets to
-            % false? Then that is taken into account in selectHabitatTile
-            % and selectWildlifeToken
-
+            if ~playerObj.DecoupledTileToken
+                playerObj.DecoupledTileToken = true;
+                playerObj.NatureTokens = playerObj.NatureTokens - 1;
+                tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
+                gameObj.NatureTokens(tokenIdx) = 0;
+            else
+                fprintf('Nature token already spent for this purpose!\n');
+            end
 
             % Option 2: Wipe any wildlife tokens (player must select, do this later.)
 
         end
 
-        function selectHabitatTile()
-
+        function playerObj = selectHabitatTile(playerObj, tileCenterIdx)
+            if playerObj.DecoupledTileToken
+                playerObj.SelectedTileIdx = tileCenterIdx;
+            else
+                playerObj.SelectedTileIdx = tileCenterIdx;
+                playerObj.SelectedTokenIdx = tileCenterIdx;
+            end
         end
 
-        function selectWildlifeToken()
-
+        function playerObj = selectWildlifeToken(playerObj, tokenCenterIdx)
+            if playerObj.DecoupledTileToken
+                playerObj.SelectedTokenIdx = tokenCenterIdx;
+            else
+                playerObj.SelectedTokenIdx = tokenCenterIdx;
+                playerObj.SelectedTileIdx = tokenCenterIdx;
+            end
         end
 
-        function rotateHabitatTile(player, HabitatTile)
-
+        function habitatTile = rotateHabitatTile(habitatTile)
+            habitatTile.Orientation = habitatTile.Orientation + 1;
         end
 
         function placeHabitatTile(player,HabitatTile)

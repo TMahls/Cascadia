@@ -16,7 +16,7 @@ obj.Players(1).AvailableActions
 
 if ismember(MovesEnum.OverpopulationWipe, obj.Players(1).AvailableActions)
     fprintf('Performing voluntary overpop wipe\n');
-    obj = playerAction(obj, MovesEnum.OverpopulationWipe);
+    obj = playerAction(obj, MovesEnum.OverpopulationWipe, []);
     
     
     obj.WildlifeTokens(obj.CenterTokenIdx).Animal;

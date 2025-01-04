@@ -11,6 +11,7 @@ classdef Player
         % Flags used to determine valid moves
         UsedVoluntaryOverpopulationWipe (1,1) logical
         SpentNatureToken (1,1) logical
+        DecoupledTileToken (1,1) logical
         SelectedTileIdx (1,1) uint8
         SelectedTokenIdx (1,1) uint8
         TilePlaced (1,1) logical
@@ -35,6 +36,16 @@ classdef Player
             end
 
             playerObj.AvailableActions = MovesEnum.checkMoveAvailability(gameObj, playerObj);
+        end
+
+        function obj = resetTurnFlags(obj)
+            % Reset turn flags in preparation for the next turn
+            obj.UsedVoluntaryOverpopulationWipe = false;
+            obj.SpentNatureToken = false;
+            obj.DecoupledTileToken = false;
+            obj.SelectedTileIdx = 0;
+            obj.SelectedTokenIdx = 0;
+            obj.TilePlaced = false;
         end
 
     end

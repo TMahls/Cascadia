@@ -8,7 +8,7 @@ classdef Game
         StarterHabitatTiles HabitatTile % Array of 'StartHabitatTiles', which is an array of 3 tiles...
         HabitatTiles HabitatTile % Array of HabitatTile
         WildlifeTokens WildlifeToken % Array of WildlifeToken
-        NatureTokens uint8 % Array of size NumWildlifeTokens, value is status
+        NatureTokens uint8 % Array of size NumWildlifeTokens, value is which player owns it (0 default)
 
         CenterTileIdx uint8 % Idx in 'HabitatTiles' of center tiles (in center order)
         CenterTokenIdx uint8 % Idx in 'NatureTokens' of center tiles (in center order)
@@ -94,7 +94,7 @@ classdef Game
                 obj.Players(obj.PlayerTurn).getAvailableActions(obj);
         end
 
-        function obj = playerAction(obj, action)
+        function obj = playerAction(obj, action, moveMetadata)
             %PLAYERACTION Summary of this method goes here
             % Callback triggered by a player selecting a move
 
@@ -102,7 +102,7 @@ classdef Game
 
             if ismember(action, currPlayer.AvailableActions)
                 % Execute selected move
-                [obj, currPlayer] = MovesEnum.executeMove(obj, currPlayer, action);
+                [obj, currPlayer] = MovesEnum.executeMove(obj, currPlayer, action, moveMetadata);
 
                 % Check if player can continue turn, or if game is over
                 [obj, currPlayer] = currPlayer.getAvailableActions(obj);
@@ -115,10 +115,11 @@ classdef Game
 
                 if turnOver || gameOver
                     % Reset once-per-turn actions
-                    obj.Players(obj.PlayerTurn).UsedVoluntaryOverpopulationWipe = false;
+                    obj.Players(obj.PlayerTurn) = resetTurnFlags(obj.Players(obj.PlayerTurn));
 
                     % Update player's score
-
+                    % We do this every turn for the purposes of the AI.
+                    % It'll want to know ;)
                 end
 
                 if gameOver
