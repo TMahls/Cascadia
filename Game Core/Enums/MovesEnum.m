@@ -64,20 +64,27 @@ classdef MovesEnum < uint8
                 case MovesEnum.OverpopulationWipe
                     gameObj = MovesEnum.overpopulationWipe(gameObj);
                     playerObj.UsedVoluntaryOverpopulationWipe = true;
+
                 case MovesEnum.SpendNatureToken
+                    spendNatureToken(player);
 
                 case MovesEnum.SelectTile
+                    selectHabitatTile();
 
                 case MovesEnum.SelectToken
+                    selectWildlifeToken();
 
                 case MovesEnum.RotateTile
+                    rotateHabitatTile(player, HabitatTile);
 
                 case MovesEnum.PlaceTile
+                    placeHabitatTile(player,HabitatTile);
 
                 case MovesEnum.PlaceToken
+                    placeWildlifeToken(player,NatureToken);
 
                 case MovesEnum.DiscardToken
-
+                    discardWildlifeToken(player,NatureToken);
             end
         end
 
@@ -91,8 +98,6 @@ classdef MovesEnum < uint8
         function tf = checkSpendNatureToken(gameObj, playerObj)
             tf = (playerObj.NatureTokens > 0);              
         end
-
-
 
         function gameObj = overpopulationWipe(gameObj)
             % Remove animal that appears for all center tiles (auto-wipe), 
@@ -148,6 +153,22 @@ classdef MovesEnum < uint8
         end
 
         function spendNatureToken(player)
+            % Option 1: Decouple habitat tile and wildlife token selection
+
+            % TODO - player has 'coupledTileToken' flag that this sets to
+            % false? Then that is taken into account in selectHabitatTile
+            % and selectWildlifeToken
+
+
+            % Option 2: Wipe any wildlife tokens (player must select, do this later.)
+
+        end
+
+        function selectHabitatTile()
+
+        end
+
+        function selectWildlifeToken()
 
         end
 
