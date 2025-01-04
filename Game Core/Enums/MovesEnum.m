@@ -1,26 +1,62 @@
 classdef MovesEnum < uint8
     %MOVESENUM Summary of this class goes here
     %   Detailed explanation goes here
+    % Order:
+    % 1. Overpop Wipe / Select Tile / Select Token / Spend nature token
+    % After overpop wipe or first spend nature token
+    % 2. Spend nature token / Select Tile / Select Token
+    % After all nature tokens spent
+    % 3. Select Tile / Select Token
+    % After tile and token selected
+    % 4. Rotate Tile / Place Tile
+    % After place tile
+    % 5. Place Token / Discard Token
+    % Overpop wipe -> Spend nature token -> Select tile / token -> Rotate /
+    % place tile -> Place / discard token
 
     enumeration
         OverpopulationWipe (0)
         SpendNatureToken (1)
-        SelectTile (1)
-        SelectToken (2)
-        RotateTile (3)
-        PlaceTile (4)
-        PlaceToken (5)
-        DiscardToken (6)
+        SelectTile (2)
+        SelectToken (3)
+        RotateTile (4)
+        PlaceTile (5)
+        PlaceToken (6)
+        DiscardToken (7)
     end
 
     methods (Static)
         function moveList = checkMoveAvailability(gameObj, playerObj)
-            moveList = MovesEnum.empty; 
+            moveList = MovesEnum.empty;
 
-            if MovesEnum.checkVoluntaryOverpopulationWipe(gameObj, playerObj)
-                moveList = [moveList MovesEnum.OverpopulationWipe];
+            if ~playerObj.TilePlaced
+                if playerObj.SelectedTileIdx == 0 || playerObj.SelectedTokenIdx == 0
+                    % Stage 1
+                    if MovesEnum.checkVoluntaryOverpopulationWipe(gameObj, playerObj)
+                        moveList = [moveList MovesEnum.OverpopulationWipe];
+                    end
+
+                    % Stage 2
+                    if MovesEnum.checkSpendNatureToken(gameObj, playerObj)
+                        moveList = [moveList MovesEnum.SpendNatureToken];
+                    end
+
+                    % Stage 3
+                    if playerObj.SelectedTileIdx == 0
+                        moveList = [moveList MovesEnum.SelectTile];
+                    end
+
+                    if playerObj.SelectedTokenIdx == 0
+                        moveList = [moveList MovesEnum.SelectToken];
+                    end
+                else
+                    % Stage 4
+                    moveList = [moveList MovesEnum.RotateTile MovesEnum.PlaceTile];
+                end
+            else
+                % Stage 5
+                moveList = [MovesEnum.PlaceToken MovesEnum.DiscardToken];
             end
-
         end
 
         function [gameObj, playerObj] = executeMove(gameObj, playerObj, move)
@@ -28,7 +64,19 @@ classdef MovesEnum < uint8
                 case MovesEnum.OverpopulationWipe
                     gameObj = MovesEnum.overpopulationWipe(gameObj);
                     playerObj.UsedVoluntaryOverpopulationWipe = true;
-                otherwise
+                case MovesEnum.SpendNatureToken
+
+                case MovesEnum.SelectTile
+
+                case MovesEnum.SelectToken
+
+                case MovesEnum.RotateTile
+
+                case MovesEnum.PlaceTile
+
+                case MovesEnum.PlaceToken
+
+                case MovesEnum.DiscardToken
 
             end
         end
@@ -36,18 +84,21 @@ classdef MovesEnum < uint8
         function tf = checkVoluntaryOverpopulationWipe(gameObj, playerObj)
              numAnimals = gameObj.countSameCenterAnimals();
              tf = (numAnimals == (gameObj.GameParameters.CenterTiles - 1)) && ...               
-             ~playerObj.UsedVoluntaryOverpopulationWipe;                
+             ~playerObj.UsedVoluntaryOverpopulationWipe &&...
+             ~playerObj.SpentNatureToken;                
         end
+
+        function tf = checkSpendNatureToken(gameObj, playerObj)
+            tf = (playerObj.NatureTokens > 0);              
+        end
+
+
 
         function gameObj = overpopulationWipe(gameObj)
             % Remove animal that appears for all center tiles (auto-wipe), 
             % or all but one (voluntary wipe)
             centerIdx = gameObj.CenterTokenIdx;
-
-            % Display animals before
-            fprintf('Animals before: \n')
-            gameObj.WildlifeTokens(centerIdx).Animal
-
+       
             % Identify animal to be removed
             animalCount = zeros(1,AnimalEnum.NumAnimals,'uint8');
             for i = 1:length(centerIdx)
@@ -94,10 +145,6 @@ classdef MovesEnum < uint8
             for i = animalReplaceIdx
                 gameObj.WildlifeTokens(i).Status = StatusEnum.Hidden;
             end
-
-            % Display animals after
-            fprintf('Animals after: \n')
-            gameObj.WildlifeTokens(gameObj.CenterTokenIdx).Animal
         end
 
         function spendNatureToken(player)

@@ -6,8 +6,14 @@ classdef Player
         Environment Environment % The game map
         NatureTokens (1,1) uint8 % Number of tokens
         Name char
+
         AvailableActions MovesEnum % Current legal moves
-        UsedVoluntaryOverpopulationWipe logical
+        % Flags used to determine valid moves
+        UsedVoluntaryOverpopulationWipe (1,1) logical
+        SpentNatureToken (1,1) logical
+        SelectedTileIdx (1,1) uint8
+        SelectedTokenIdx (1,1) uint8
+        TilePlaced (1,1) logical
     end
 
     methods

@@ -5,25 +5,23 @@ tic
 obj = Game;
 
 
-for n = 1:500
+for n = 1:100
 obj = obj.startNewGame(3);
 
 toc
 
-obj.WildlifeTokens(obj.CenterTokenIdx).Animal
+obj.WildlifeTokens(obj.CenterTokenIdx).Animal;
 
 obj.Players(1).AvailableActions
 
-if ismember(obj.Players(1).AvailableActions, MovesEnum.OverpopulationWipe)
+if ismember(MovesEnum.OverpopulationWipe, obj.Players(1).AvailableActions)
     fprintf('Performing voluntary overpop wipe\n');
     obj = playerAction(obj, MovesEnum.OverpopulationWipe);
     
     
-    obj.WildlifeTokens(obj.CenterTokenIdx).Animal
+    obj.WildlifeTokens(obj.CenterTokenIdx).Animal;
 
-    if obj.countSameCenterAnimals() >= 3
-       fprintf('Here! n = %d\n', n)
-    end
+    obj.Players(1).AvailableActions
     
     obj.CurrentScores;
 end
