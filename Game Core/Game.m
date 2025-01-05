@@ -120,41 +120,42 @@ classdef Game
                     % Update player's score
                     % We do this every turn for the purposes of the AI.
                     % It'll want to know ;)
-                end
 
-                if gameOver
-                    % Print scores, announce winner
-                elseif turnOver
-                    % Replace Center
-                    tileIdx = randi(length(obj.HabitatTiles));
-                    randTile = obj.HabitatTiles(tileIdx);
-                    while (randTile.Status ~= StatusEnum.Hidden)
+                    if gameOver
+                        % Print scores, announce winner
+                    elseif turnOver
+                        % Replace Center
                         tileIdx = randi(length(obj.HabitatTiles));
                         randTile = obj.HabitatTiles(tileIdx);
-                    end
+                        while (randTile.Status ~= StatusEnum.Hidden)
+                            tileIdx = randi(length(obj.HabitatTiles));
+                            randTile = obj.HabitatTiles(tileIdx);
+                        end
 
-                    tokenIdx = randi(length(obj.WildlifeTokens));
-                    randToken = obj.WildlifeTokens(tokenIdx);
-                    while (randToken.Status ~= StatusEnum.Hidden)
                         tokenIdx = randi(length(obj.WildlifeTokens));
                         randToken = obj.WildlifeTokens(tokenIdx);
+                        while (randToken.Status ~= StatusEnum.Hidden)
+                            tokenIdx = randi(length(obj.WildlifeTokens));
+                            randToken = obj.WildlifeTokens(tokenIdx);
+                        end
+
+                        obj.HabitatTiles(tileIdx).Status = StatusEnum.InCenter;
+                        obj.WildlifeTokens(tokenIdx).Status = StatusEnum.InCenter;
+
+                        obj.CenterTileIdx(obj.CenterTileIdx == 0) = tileIdx;
+                        obj.CenterTokenIdx(obj.CenterTokenIdx == 0) = tokenIdx;
+
+                        % Prepare for next player's turn
+                        obj.TurnCount = obj.TurnCount + 1;
+                        obj.PlayerTurn = mod(obj.PlayerTurn, length(obj.Players)) + 1;
+                        fprintf('Player %d''s Turn\n', obj.PlayerTurn);
+                        [obj, obj.Players(obj.PlayerTurn)] = ...
+                            obj.Players(obj.PlayerTurn).getAvailableActions(obj);
+                    else
+                        fprintf('Player %d Continues Turn\n', obj.PlayerTurn);
                     end
-
-                    obj.HabitatTiles(tileIdx).Status = StatusEnum.InCenter;
-                    obj.WildlifeTokens(tokenIdx).Status = StatusEnum.InCenter;
-
-                    obj.CenterTileIdx(obj.CenterTileIdx == 0) = tileIdx;
-                    obj.CenterTokenIdx(obj.CenterTokenIdx == 0) = tokenIdx;
-
-                    % Prepare for next player's turn
-                    obj.TurnCount = obj.TurnCount + 1;
-                    obj.PlayerTurn = mod(obj.PlayerTurn, length(obj.Players)) + 1;
-                    fprintf('Player %d''s Turn\n', obj.PlayerTurn);
-                    [obj, obj.Players(obj.PlayerTurn)] = ...
-                        obj.Players(obj.PlayerTurn).getAvailableActions(obj);
-                else
-                    fprintf('Player %d Continues Turn\n', obj.PlayerTurn);
-                end
+                end  
+                
                 obj.Players(obj.PlayerTurn) = currPlayer;
             else
                 fprintf('Action not available to player!');
