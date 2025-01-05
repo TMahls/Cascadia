@@ -158,7 +158,7 @@ classdef Game
                 
                 obj.Players(obj.PlayerTurn) = currPlayer;
             else
-                fprintf('Action not available to player!');
+                fprintf('Action not available to player!\n');
             end
         end
 
