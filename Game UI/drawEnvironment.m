@@ -1,4 +1,4 @@
-function figureObj = drawEnvironment(gameObj, environment, figureObj)
+function envAxes = drawEnvironment(environment)
 %DRAWENVIRONMENT Summary of this function goes here
 %   Detailed explanation goes here
 outputArg1 = inputArg1;

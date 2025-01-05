@@ -21,7 +21,7 @@ classdef TerrainEnum < uint8
                     color = ColorEnum.DarkGreen;
                 case TerrainEnum.Mountain
                     color = ColorEnum.Grey;
-                case TerrainEnum.Prarie
+                case TerrainEnum.Prairie
                     color = ColorEnum.Yellow;
                 otherwise
                     color = ColorEnum.Black;

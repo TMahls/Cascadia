@@ -65,7 +65,10 @@ classdef MovesEnum < uint8
             switch move
                 case MovesEnum.OverpopulationWipe
                     gameObj = MovesEnum.overpopulationWipe(gameObj);
-                    playerObj.UsedVoluntaryOverpopulationWipe = true;
+                    numAnimals = gameObj.countSameCenterAnimals();
+                    if numAnimals ~= gameObj.GameParameters.CenterTiles
+                        playerObj.UsedVoluntaryOverpopulationWipe = true;
+                    end
 
                 case MovesEnum.SpendNatureToken
                     [gameObj, playerObj] = spendNatureToken(playerObj);

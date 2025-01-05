@@ -30,13 +30,12 @@ classdef Player
         function [gameObj, playerObj] = getAvailableActions(playerObj, gameObj)
             % Auto overpopulation wipe
             numAnimals = gameObj.countSameCenterAnimals();          
-            while numAnimals == gameObj.GameParameters.CenterTiles 
+            if numAnimals == gameObj.GameParameters.CenterTiles 
                 disp('Auto overpopulation wipe!')          
-                gameObj = MovesEnum.overpopulationWipe(gameObj);
-                numAnimals = gameObj.countSameCenterAnimals();
+                playerObj.AvailableActions = MovesEnum.OverpopulationWipe;
+            else
+                playerObj.AvailableActions = MovesEnum.checkMoveAvailability(gameObj, playerObj);
             end
-
-            playerObj.AvailableActions = MovesEnum.checkMoveAvailability(gameObj, playerObj);
         end
 
         function obj = resetTurnFlags(obj)

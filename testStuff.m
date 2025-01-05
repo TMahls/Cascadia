@@ -3,32 +3,35 @@
 clear;clc;
 tic
 obj = Game;
-
-
-for n = 1:100
 obj = obj.startNewGame(3);
-
 toc
 
-obj.WildlifeTokens(obj.CenterTokenIdx).Animal;
 
-obj.Players(1).AvailableActions
-
-if ismember(MovesEnum.OverpopulationWipe, obj.Players(1).AvailableActions)
-    fprintf('Performing voluntary overpop wipe\n');
-    obj = playerAction(obj, MovesEnum.OverpopulationWipe, []);
-    
-    
-    obj.WildlifeTokens(obj.CenterTokenIdx).Animal;
-
-    obj.Players(1).AvailableActions
-    
-    obj.CurrentScores;
-end
-end
-
+% Test out graphics
+drawCenter(obj);
 
 % Try out moves
+% for n = 1:100
+% 
+% obj.WildlifeTokens(obj.CenterTokenIdx).Animal;
+% 
+% obj.Players(1).AvailableActions
+% 
+% if ismember(MovesEnum.OverpopulationWipe, obj.Players(1).AvailableActions)
+%     fprintf('Performing voluntary overpop wipe\n');
+%     obj = playerAction(obj, MovesEnum.OverpopulationWipe, []);
+% 
+% 
+%     obj.WildlifeTokens(obj.CenterTokenIdx).Animal;
+% 
+%     obj.Players(1).AvailableActions
+% 
+%     obj.CurrentScores;
+% end
+% end
+
+
+
 
 
 % See starter Tiles

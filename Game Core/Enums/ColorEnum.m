@@ -16,18 +16,18 @@ classdef ColorEnum
         Black ([0,0,0])
         
         % Habitats
-        DarkBlue ([36, 39, 255])
-        LightGreen ([107, 219, 46])
-        DarkGreen ([34, 69, 30])
-        Grey ([92, 91, 90])
-        Yellow ([204, 163, 0])
+        DarkBlue ([36, 39, 255]./255)
+        LightGreen ([107, 219, 46]./255)
+        DarkGreen ([34, 69, 30]./255)
+        Grey ([92, 91, 90]./255)
+        Yellow ([204, 163, 0]./255)
 
         % Animals
-        Brown ([46, 31, 17])
-        LightBrown ([201, 158, 115])
-        Pink ([247, 116, 177])
-        LightBlue ([116, 201, 247])
-        Orange ([250, 127, 5])
+        Brown ([46, 31, 17]./255)
+        LightBrown ([201, 158, 115]./255)
+        Pink ([247, 116, 177]./255)
+        LightBlue ([116, 201, 247]./255)
+        Orange ([250, 127, 5]./255)
     end
 end
 
