@@ -6,17 +6,17 @@ cla(centerAxes);
 for i = 1:length(gameObj.CenterTileIdx)
     centerX = i;
     centerY = 1;
-    shapeSize = 0.25;
+    shapeSize = 0.5;
 
     % Draw Habitat Tile hexagon
     currentTile = gameObj.HabitatTiles(gameObj.CenterTileIdx(i));    
-    drawHabitatTile(centerAxes, centerX, centerY, shapeSize, currentTile)
+    drawHabitatTile(centerAxes, centerX, centerY, shapeSize, currentTile, i);
 
     % Draw Wildlife Token circle
     centerY = -1;
-    shapeSize = 100;
+    shapeSize = 20;
     currentToken = gameObj.WildlifeTokens(gameObj.CenterTokenIdx(i));   
-    drawWildlifeToken(centerAxes, centerX, centerY, shapeSize, currentToken)
+    drawWildlifeToken(centerAxes, centerX, centerY, shapeSize, currentToken, i);
 end
 
 end

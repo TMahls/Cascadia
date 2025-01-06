@@ -13,7 +13,10 @@ classdef ColorEnum
     end
 
     enumeration
-        Black ([0,0,0])
+        % UI Colors
+        Black ([0, 0, 0]./255)
+        Gold ([168, 133, 35]./255)
+        White  ([255, 255, 255]./255)
         
         % Habitats
         DarkBlue ([36, 39, 255]./255)

@@ -31,28 +31,22 @@ classdef MovesEnum < uint8
 
             if ~playerObj.TokenDiscarded
                 if ~playerObj.TilePlaced
-                    if playerObj.SelectedTileIdx == 0 || playerObj.SelectedTokenIdx == 0
-                        % Stage 1
-                        if MovesEnum.checkVoluntaryOverpopulationWipe(gameObj, playerObj)
-                            moveList = [moveList MovesEnum.OverpopulationWipe];
-                        end
+                    % Stage 1
+                    if MovesEnum.checkVoluntaryOverpopulationWipe(gameObj, playerObj)
+                        moveList = [moveList MovesEnum.OverpopulationWipe];
+                    end
 
-                        % Stage 2
-                        if MovesEnum.checkSpendNatureToken(playerObj)
-                            moveList = [moveList MovesEnum.SpendNatureToken];
-                        end
+                    % Stage 2
+                    if MovesEnum.checkSpendNatureToken(playerObj)
+                        moveList = [moveList MovesEnum.SpendNatureToken];
+                    end
 
-                        % Stage 3
-                        if playerObj.SelectedTileIdx == 0
-                            moveList = [moveList MovesEnum.SelectTile];
-                        end
+                    % Stage 3
+                    moveList = [moveList MovesEnum.SelectTile MovesEnum.SelectToken];
 
-                        if playerObj.SelectedTokenIdx == 0
-                            moveList = [moveList MovesEnum.SelectToken];
-                        end
-                    else
+                    if playerObj.SelectedTileIdx ~= 0
                         % Stage 4
-                        moveList = [moveList MovesEnum.RotateTile MovesEnum.PlaceTile];
+                        moveList = [moveList MovesEnum.SelectToken MovesEnum.RotateTile MovesEnum.PlaceTile];
                     end
                 else
                     % Stage 5
@@ -64,28 +58,28 @@ classdef MovesEnum < uint8
         function [gameObj, playerObj] = executeMove(gameObj, playerObj, move, moveMetadata)
             switch move
                 case MovesEnum.OverpopulationWipe
-                    gameObj = MovesEnum.overpopulationWipe(gameObj);
+                    [gameObj, playerObj] = MovesEnum.overpopulationWipe(gameObj, playerObj);
                     numAnimals = gameObj.countSameCenterAnimals();
                     if numAnimals ~= gameObj.GameParameters.CenterTiles
                         playerObj.UsedVoluntaryOverpopulationWipe = true;
                     end
 
                 case MovesEnum.SpendNatureToken
-                    [gameObj, playerObj] = spendNatureToken(playerObj);
+                    [gameObj, playerObj] = MovesEnum.spendNatureToken(playerObj);
 
                 case MovesEnum.SelectTile
                     tileCenterIdx = moveMetadata;
-                    playerObj = selectHabitatTile(playerObj, tileCenterIdx);
+                    playerObj = MovesEnum.selectHabitatTile(playerObj, tileCenterIdx);
 
                 case MovesEnum.SelectToken
                     tokenCenterIdx = moveMetadata;
-                    playerObj = selectWildlifeToken(playerObj, tokenCenterIdx);
+                    playerObj = MovesEnum.selectWildlifeToken(playerObj, tokenCenterIdx);
 
                 case MovesEnum.RotateTile
                     tileCenterIdx = moveMetadata;
                     tileGameIdx = gameObj.CenterTileIdx(tileCenterIdx);
                     habitatTile = gameObj.HabitatTiles(tileGameIdx);
-                    habitatTile = rotateHabitatTile(habitatTile);
+                    habitatTile = MovesEnum.rotateHabitatTile(habitatTile);
                     gameObj.HabitatTiles(tileGameIdx) = habitatTile;
 
                 case MovesEnum.PlaceTile
@@ -94,7 +88,7 @@ classdef MovesEnum < uint8
                     habitatTile = gameObj.HabitatTiles(tileGameIdx);
 
                     coordinate = moveMetadata{2};
-                    [gameObj, playerObj] = placeHabitatTile(playerObj, gameObj, tileGameIdx, habitatTile, coordinate);
+                    [gameObj, playerObj] = MovesEnum.placeHabitatTile(playerObj, gameObj, tileGameIdx, habitatTile, coordinate);
 
                 case MovesEnum.PlaceToken
                     tokenCenterIdx = moveMetadata{1};
@@ -102,13 +96,13 @@ classdef MovesEnum < uint8
                     wildlifeToken = gameObj.WildlifeTokens(tokenGameIdx);
 
                     coordinate = moveMetadata{2};
-                    [gameObj, playerObj] = placeWildlifeToken(gameObj, playerObj, tokenGameIdx, wildlifeToken, coordinate);
+                    [gameObj, playerObj] = MovesEnum.placeWildlifeToken(gameObj, playerObj, tokenGameIdx, wildlifeToken, coordinate);
 
                 case MovesEnum.DiscardToken
                     tokenCenterIdx = moveMetadata{1};
                     tokenGameIdx = gameObj.CenterTileIdx(tokenCenterIdx);
 
-                    [gameObj, playerObj] = discardWildlifeToken(gameObj, playerObj, tokenGameIdx);
+                    [gameObj, playerObj] = MovesEnum.discardWildlifeToken(gameObj, playerObj, tokenGameIdx);
             end
         end
 
@@ -123,7 +117,7 @@ classdef MovesEnum < uint8
             tf = (playerObj.NatureTokens > 0);
         end
 
-        function gameObj = overpopulationWipe(gameObj)
+        function [gameObj, playerObj] = overpopulationWipe(gameObj, playerObj)
             % Remove animal that appears for all center tiles (auto-wipe),
             % or all but one (voluntary wipe)
             centerIdx = gameObj.CenterTokenIdx;
@@ -174,6 +168,10 @@ classdef MovesEnum < uint8
             for i = animalReplaceIdx
                 gameObj.WildlifeTokens(i).Status = StatusEnum.Hidden;
             end
+
+            % Reset player selections
+            playerObj.SelectedTileIdx = 0;
+            playerObj.SelectedTokenIdx = 0;
         end
 
         function [gameObj, playerObj] = spendNatureToken(gameObj, playerObj)

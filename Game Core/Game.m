@@ -97,7 +97,7 @@ classdef Game
         function obj = playerAction(obj, action, moveMetadata)
             %PLAYERACTION Summary of this method goes here
             % Callback triggered by a player selecting a move
-
+            disp('ACTION!');
             currPlayer = obj.Players(obj.PlayerTurn);
 
             if ismember(action, currPlayer.AvailableActions)
