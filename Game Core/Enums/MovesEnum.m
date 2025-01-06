@@ -235,6 +235,11 @@ classdef MovesEnum < uint8
             % Place wildlife token on it
             playerObj.Environent.HabitatTiles(i).WildlifeToken = wildlifeToken;
 
+            % Increment Nature Token if Keystone
+            if isKeystoneTile(playerObj.Environent.HabitatTiles(i))
+                takeNatureToken(playerObj, gameObj);
+            end
+
             % Change gameObj
             gameObj.WildlifeTokens(gameTokenIdx).Status = StatusEnum.Played;
         end

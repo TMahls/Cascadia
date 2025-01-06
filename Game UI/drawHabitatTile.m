@@ -27,29 +27,36 @@ end
 
 plotPolyshapeComponents(ax, pshapes, colors, id);
 
-% Plot Compatible wildlife markers
-% TODO - OR DRAW WILDLIFE MARKER CURRENTLY ON THERE (LARGE)
-colors = ColorEnum.empty;
-for i = 1:length(habitatTile.CompatibleWildlife)
-    colors(i) = getColor(habitatTile.CompatibleWildlife(i));
-end
-
+% Plot Wildlife Tokens or Compatibility Markers
 nPoints = 20; % A dodecagon is basically a circle right? :)
-pshapes = polyshape.empty;
-if isscalar(colors)
-    % 1 Compatible Wildlife - One circle
-    pshapes = nsidedpoly(nPoints,'Center',[centerX centerY],'SideLength',sideLength/15);
-elseif length(colors) == 2
-    % 2 Compatible Wildlife
-    pshapes(1) = nsidedpoly(nPoints,'Center',[centerX, centerY + sideLength/5],'SideLength',sideLength/15);
-    pshapes(2) = nsidedpoly(nPoints,'Center',[centerX, centerY - sideLength/5],'SideLength',sideLength/15);
-elseif length(colors) == 3
-    % 3 Compatible Wildlife
-    innerTriangle = nsidedpoly(3,'Center',[centerX centerY],'SideLength',sideLength/3);
-    vertices = innerTriangle.Vertices;
-    pshapes(1) = nsidedpoly(nPoints,'Center',vertices(1,:),'SideLength',sideLength/15);
-    pshapes(2) = nsidedpoly(nPoints,'Center',vertices(2,:),'SideLength',sideLength/15);
-    pshapes(3) = nsidedpoly(nPoints,'Center',vertices(3,:),'SideLength',sideLength/15);
+
+if isempty(habitatTile.WildlifeToken.Animal)
+    % Plot Compatible wildlife markers
+    colors = ColorEnum.empty;
+    for i = 1:length(habitatTile.CompatibleWildlife)
+        colors(i) = getColor(habitatTile.CompatibleWildlife(i));
+    end
+    
+    pshapes = polyshape.empty;
+    if isscalar(colors)
+        % 1 Compatible Wildlife - One circle
+        pshapes = nsidedpoly(nPoints,'Center',[centerX centerY],'SideLength',sideLength/15);
+    elseif length(colors) == 2
+        % 2 Compatible Wildlife
+        pshapes(1) = nsidedpoly(nPoints,'Center',[centerX, centerY + sideLength/5],'SideLength',sideLength/15);
+        pshapes(2) = nsidedpoly(nPoints,'Center',[centerX, centerY - sideLength/5],'SideLength',sideLength/15);
+    elseif length(colors) == 3
+        % 3 Compatible Wildlife
+        innerTriangle = nsidedpoly(3,'Center',[centerX centerY],'SideLength',sideLength/3);
+        vertices = innerTriangle.Vertices;
+        pshapes(1) = nsidedpoly(nPoints,'Center',vertices(1,:),'SideLength',sideLength/15);
+        pshapes(2) = nsidedpoly(nPoints,'Center',vertices(2,:),'SideLength',sideLength/15);
+        pshapes(3) = nsidedpoly(nPoints,'Center',vertices(3,:),'SideLength',sideLength/15);
+    end
+else
+    % Plot played token
+    colors = getColor(habitatTile.WildlifeToken.Animal);
+    pshapes = nsidedpoly(nPoints,'Center',[centerX centerY],'SideLength',sideLength/10);
 end
 
 plotPolyshapeComponents(ax, pshapes, colors, 0);

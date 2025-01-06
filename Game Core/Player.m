@@ -38,6 +38,14 @@ classdef Player
             end
         end
 
+        function [gameObj, playerObj] = takeNatureToken(playerObj, gameObj)           
+            nextTokenIdx = find(gameObj.NatureTokens == 0, 1);
+            if ~isempty(nextTokenIdx)
+                gameObj.NatureTokens(nextTokenIdx) = gameObj.PlayerTurn;
+                playerObj.NatureTokens = playerObj.NatureTokens + 1;
+            end
+        end
+
         function obj = resetTurnFlags(obj)
             % Reset turn flags in preparation for the next turn
             obj.UsedVoluntaryOverpopulationWipe = false;
