@@ -9,7 +9,8 @@ for i = 1:length(gameObj.CenterTileIdx)
     shapeSize = 0.5;
 
     % Draw Habitat Tile hexagon
-    currentTile = gameObj.HabitatTiles(gameObj.CenterTileIdx(i));    
+    currentTile = gameObj.HabitatTiles(gameObj.CenterTileIdx(i));
+    currentTile.Orientation = 1;
     drawHabitatTile(centerAxes, centerX, centerY, shapeSize, currentTile, i);
 
     % Draw Wildlife Token circle

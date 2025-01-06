@@ -16,7 +16,8 @@ if isscalar(colors)
 elseif length(colors) == 2
     % 2 Terrain - Two hexagon halves
     % The angle of hexagon vertexes (in degrees) from x axis
-    pointAngles = linspace(90, 360 + 90, nPoints + 1);
+    startAngle = 90 - 60*(double(habitatTile.Orientation) - 1);
+    pointAngles = linspace(startAngle, startAngle + 360, nPoints + 1);
     points = [centerX + sideLength*cosd(pointAngles)', centerY + sideLength*sind(pointAngles)'];
 
     pshapes(1) = polyshape(points(1:(nPoints/2 + 1),:));
@@ -26,6 +27,7 @@ end
 plotPolyshapeComponents(ax, pshapes, colors, id);
 
 % Plot Compatible wildlife markers
+% TODO - OR DRAW WILDLIFE MARKER CURRENTLY ON THERE (LARGE)
 colors = ColorEnum.empty;
 for i = 1:length(habitatTile.CompatibleWildlife)
     colors(i) = getColor(habitatTile.CompatibleWildlife(i));
@@ -49,7 +51,7 @@ elseif length(colors) == 3
     pshapes(3) = nsidedpoly(nPoints,'Center',vertices(3,:),'SideLength',sideLength/15);
 end
 
-plotPolyshapeComponentsNoUserData(ax, pshapes, colors);
+plotPolyshapeComponents(ax, pshapes, colors, 0);
 
 end
 
@@ -59,15 +61,8 @@ for n = 1:length(pshapes)
     pgon = plot(ax, pshapes(n), 'FaceColor', currColor, 'FaceAlpha',1,...
         'EdgeColor',ColorEnum.Black.rgbValues);
     pgon.HitTest = 'off'; % Clicking will trigger UIAxes callback
-    pgon.UserData = id;
-end
-end
-
-function plotPolyshapeComponentsNoUserData(ax, pshapes, faceColors)
-for n = 1:length(pshapes)
-    currColor = faceColors(n).rgbValues;
-    pgon = plot(ax, pshapes(n), 'FaceColor', currColor, 'FaceAlpha',1,...
-        'EdgeColor',ColorEnum.Black.rgbValues);
-    pgon.HitTest = 'off'; % Clicking will trigger UIAxes callback
+    if id ~= 0
+        pgon.UserData = id;
+    end
 end
 end

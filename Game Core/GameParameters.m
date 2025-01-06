@@ -76,6 +76,7 @@ classdef GameParameters
                 starterTiles(i,1).Terrain = TerrainEnum(i - 1);
                 idx = find(obj.AnimalTerrains(:,end) == TerrainEnum(i - 1));
                 starterTiles(i,1).CompatibleWildlife = AnimalEnum(idx - 1);
+                starterTiles(i,1).Coordinate = [0,0,0];
                 starterTiles(i,1).Status = StatusEnum.OutOfPlay;
 
                 % Other 2
@@ -83,12 +84,14 @@ classdef GameParameters
                 starterTiles(i,2).Terrain = obj.StarterTerrain{i, 1};
                 starterTiles(i,2).CompatibleWildlife = obj.StarterWildlife{i, 1};
                 starterTiles(i,2).Status = StatusEnum.OutOfPlay;
+                starterTiles(i,2).Coordinate = [0,-1,1];
                 starterTiles(i,2).Orientation = 2;
 
                 starterTiles(i,3) = HabitatTile();
                 starterTiles(i,3).Terrain = obj.StarterTerrain{i, 2};
                 starterTiles(i,3).CompatibleWildlife = obj.StarterWildlife{i, 2};
                 starterTiles(i,3).Status = StatusEnum.OutOfPlay;
+                starterTiles(i,3).Coordinate = [1,-1,0];
                 starterTiles(i,3).Orientation = 6;
             end
         end
