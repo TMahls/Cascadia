@@ -1,8 +1,11 @@
-function envAxes = drawEnvironment(environment, envAxes)
+function envAxes = drawEnvironment(environment, envAxes, playerId)
 %DRAWENVIRONMENT Summary of this function goes here
 %   Detailed explanation goes here
 
 cla(envAxes);
+
+envAxes.Title.String = sprintf('Player %.0f''s Environment', playerId);
+
 
 sideLength = 0.5;
 % Draw Starter habitat tile

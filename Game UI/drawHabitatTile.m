@@ -16,6 +16,7 @@ if isscalar(colors)
 elseif length(colors) == 2
     % 2 Terrain - Two hexagon halves
     % The angle of hexagon vertexes (in degrees) from x axis
+    % Could have used rotate for this but eh
     startAngle = 90 - 60*(double(habitatTile.Orientation) - 1);
     pointAngles = linspace(startAngle, startAngle + 360, nPoints + 1);
     points = [centerX + sideLength*cosd(pointAngles)', centerY + sideLength*sind(pointAngles)'];
