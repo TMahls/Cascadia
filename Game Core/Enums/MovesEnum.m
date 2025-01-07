@@ -80,6 +80,11 @@ classdef MovesEnum < uint8
                     tileGameIdx = gameObj.CenterTileIdx(tileCenterIdx);
                     habitatTile = gameObj.HabitatTiles(tileGameIdx);
                     habitatTile = MovesEnum.rotateHabitatTile(habitatTile);
+
+                    % Update game objects
+                    if ~isempty(playerObj.Environment.PreviewTile)
+                        playerObj.Environment.PreviewTile.Orientation = habitatTile.Orientation;  
+                    end
                     gameObj.HabitatTiles(tileGameIdx) = habitatTile;
 
                 case MovesEnum.PlaceTile
@@ -187,7 +192,7 @@ classdef MovesEnum < uint8
             end
 
             % Option 2: Wipe any wildlife tokens (player must select, do this later.)
-
+            
         end
 
         function playerObj = selectHabitatTile(playerObj, tileCenterIdx)
@@ -216,6 +221,7 @@ classdef MovesEnum < uint8
             habitatTile.Coordinate = coordinate;
             currEnv = playerObj.Environment.HabitatTiles;
             playerObj.Environment.HabitatTiles = [currEnv habitatTile];
+            playerObj.Enviroment.PreviewTile = [];
 
             gameObj.HabitatTiles(tileIdx).Status = StatusEnum.Played;
         end

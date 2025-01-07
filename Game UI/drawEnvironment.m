@@ -1,4 +1,4 @@
-function envAxes = drawEnvironment(environment, envAxes, playerId)
+function envAxes = drawEnvironment(environment, envAxes, playerId, hexSideLength)
 %DRAWENVIRONMENT Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -6,20 +6,17 @@ cla(envAxes);
 
 envAxes.Title.String = sprintf('Player %.0f''s Environment', playerId);
 
-
-sideLength = 0.5;
-% Draw Starter habitat tile
-for i = 1:length(environment.StarterHabitatTile)
-    currentTile = environment.StarterHabitatTile(i);
-    [centerX, centerY] = HabitatTile.hex2cart(currentTile.Coordinate, sideLength);
-    drawHabitatTile(envAxes, centerX, centerY, sideLength, currentTile, 0);
+allTiles = [environment.StarterHabitatTile, environment.HabitatTiles];
+for i = 1:length(allTiles)
+    currentTile = allTiles(i);
+    centerCoords = HabitatTile.hex2cart(currentTile.Coordinate, hexSideLength);
+    drawHabitatTile(envAxes, centerCoords, hexSideLength, currentTile, 0);
 end
 
-% Draw other tiles
-for i = 1:length(environment.HabitatTiles)
-    currentTile = environment.HabitatTiles(i);
-    [centerX, centerY] = HabitatTile.hex2cart(currentTile.Coordinate, sideLength);
-    drawHabitatTile(envAxes, centerX, centerY, sideLength, currentTile, 0);
+% Draw preview tile
+currentTile = environment.PreviewTile;
+if ~isempty(currentTile)
+    centerCoords = HabitatTile.hex2cart(currentTile.Coordinate, hexSideLength);
+    drawHabitatTile(envAxes, centerCoords, hexSideLength, currentTile, -1);
 end
-
 end
