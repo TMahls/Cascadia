@@ -15,7 +15,7 @@ end
 
 % Draw preview tile
 currentTile = environment.PreviewTile;
-if ~isempty(currentTile)
+if ~isempty(currentTile) && isPlaceableTileCoord(environment, currentTile.Coordinate)
     centerCoords = HabitatTile.hex2cart(currentTile.Coordinate, hexSideLength);
     drawHabitatTile(envAxes, centerCoords, hexSideLength, currentTile, -1);
 end

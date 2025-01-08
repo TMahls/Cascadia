@@ -4,6 +4,7 @@ function drawHabitatTile(ax, centerCoords, sideLength, habitatTile, id)
 %   If > 0, we assume this is a center tile and give it a UserData of id
 %   If 0, a normal environment tile, no user data applied
 %   If -1, a preview tile and we make it semitransparent with gold border. 
+%   If -2, a played wildlife token and we give it a red border
 
 colors = ColorEnum.empty;
 for i = 1:length(habitatTile.Terrain)
@@ -57,13 +58,14 @@ if isempty(habitatTile.WildlifeToken.Animal)
         pshapes(2) = nsidedpoly(nPoints,'Center',vertices(2,:),'SideLength',sideLength/15);
         pshapes(3) = nsidedpoly(nPoints,'Center',vertices(3,:),'SideLength',sideLength/15);
     end
+
+    plotPolyshapeComponents(ax, pshapes, colors, 0);
 else
     % Plot played token
     colors = getColor(habitatTile.WildlifeToken.Animal);
-    pshapes = nsidedpoly(nPoints,'Center',centerCoords,'SideLength',sideLength/10);
+    pshapes = nsidedpoly(nPoints,'Center',centerCoords,'SideLength',sideLength/8);
 end
 
-plotPolyshapeComponents(ax, pshapes, colors, 0);
 
 end
 
@@ -76,10 +78,14 @@ for n = 1:length(pshapes)
         if id > 0
             pgon.UserData = id;
         end
-    else
+    elseif abs(id - -1) < 1e-8
         % Preview tile
         pgon = plot(ax, pshapes(n), 'FaceColor', currColor, 'FaceAlpha',1,...
-            'EdgeColor',ColorEnum.Gold.rgbValues);
+            'EdgeColor',ColorEnum.Gold.rgbValues, 'LineWidth', 3);
+    else
+        % Played wildlife token 
+        pgon = plot(ax, pshapes(n), 'FaceColor', currColor, 'FaceAlpha',1,...
+            'EdgeColor',ColorEnum.Red.rgbValues, 'LineWidth', 3);
     end
 
     pgon.HitTest = 'off'; % Clicking will trigger UIAxes callback

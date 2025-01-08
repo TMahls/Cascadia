@@ -3,9 +3,10 @@ classdef Environment
     %   Detailed explanation goes here
     
     properties
-        StarterHabitatTile (3,1) HabitatTile % The 'origin' 3 tiles
+        StarterHabitatTile HabitatTile % The 'origin' 3 tiles
         HabitatTiles HabitatTile
         PreviewTile HabitatTile % The current spot a tile may be placed
+        PreviewToken WildlifeToken % The token we are trying on for size
     end
     
     methods

@@ -69,11 +69,11 @@ classdef MovesEnum < uint8
 
                 case MovesEnum.SelectTile
                     tileCenterIdx = moveMetadata;
-                    playerObj = MovesEnum.selectHabitatTile(playerObj, tileCenterIdx);
+                    playerObj = MovesEnum.selectHabitatTile(playerObj, gameObj, tileCenterIdx);
 
                 case MovesEnum.SelectToken
                     tokenCenterIdx = moveMetadata;
-                    playerObj = MovesEnum.selectWildlifeToken(playerObj, tokenCenterIdx);
+                    playerObj = MovesEnum.selectWildlifeToken(playerObj, gameObj, tokenCenterIdx);
 
                 case MovesEnum.RotateTile
                     tileCenterIdx = moveMetadata;
@@ -83,7 +83,7 @@ classdef MovesEnum < uint8
 
                     % Update game objects
                     if ~isempty(playerObj.Environment.PreviewTile)
-                        playerObj.Environment.PreviewTile.Orientation = habitatTile.Orientation;  
+                        playerObj.Environment.PreviewTile.Orientation = habitatTile.Orientation;
                     end
                     gameObj.HabitatTiles(tileGameIdx) = habitatTile;
 
@@ -104,7 +104,7 @@ classdef MovesEnum < uint8
                     [gameObj, playerObj] = MovesEnum.placeWildlifeToken(gameObj, playerObj, tokenGameIdx, wildlifeToken, coordinate);
 
                 case MovesEnum.DiscardToken
-                    tokenCenterIdx = moveMetadata{1};
+                    tokenCenterIdx = moveMetadata;
                     tokenGameIdx = gameObj.CenterTileIdx(tokenCenterIdx);
 
                     [gameObj, playerObj] = MovesEnum.discardWildlifeToken(gameObj, playerObj, tokenGameIdx);
@@ -192,24 +192,38 @@ classdef MovesEnum < uint8
             end
 
             % Option 2: Wipe any wildlife tokens (player must select, do this later.)
-            
+
         end
 
-        function playerObj = selectHabitatTile(playerObj, tileCenterIdx)
-            if playerObj.DecoupledTileToken
-                playerObj.SelectedTileIdx = tileCenterIdx;
-            else
-                playerObj.SelectedTileIdx = tileCenterIdx;
+        function playerObj = selectHabitatTile(playerObj, gameObj, tileCenterIdx)
+            playerObj.SelectedTileIdx = tileCenterIdx;
+
+            % Update preview
+            tile = gameObj.HabitatTiles(gameObj.CenterTileIdx(tileCenterIdx));
+            playerObj.Environment.PreviewTile = tile;
+
+            if ~playerObj.DecoupledTileToken
                 playerObj.SelectedTokenIdx = tileCenterIdx;
+
+                % Update preview
+                token = gameObj.WildlifeTokens(gameObj.CenterTokenIdx(tileCenterIdx));
+                playerObj.Environment.PreviewToken = token;
             end
         end
 
-        function playerObj = selectWildlifeToken(playerObj, tokenCenterIdx)
-            if playerObj.DecoupledTileToken
-                playerObj.SelectedTokenIdx = tokenCenterIdx;
-            else
-                playerObj.SelectedTokenIdx = tokenCenterIdx;
+        function playerObj = selectWildlifeToken(playerObj, gameObj, tokenCenterIdx)
+            playerObj.SelectedTokenIdx = tokenCenterIdx;
+
+            % Update preview
+            token = gameObj.WildlifeTokens(gameObj.CenterTokenIdx(tokenCenterIdx));
+            playerObj.Environment.PreviewToken = token;
+
+            if ~playerObj.DecoupledTileToken
                 playerObj.SelectedTileIdx = tokenCenterIdx;
+
+                % Update preview
+                tile = gameObj.HabitatTiles(gameObj.CenterTileIdx(tokenCenterIdx));
+                playerObj.Environment.PreviewTile = tile;
             end
         end
 
@@ -218,36 +232,51 @@ classdef MovesEnum < uint8
         end
 
         function [gameObj, playerObj] = placeHabitatTile(playerObj, gameObj, tileIdx, habitatTile, coordinate)
-            habitatTile.Coordinate = coordinate;
-            currEnv = playerObj.Environment.HabitatTiles;
-            playerObj.Environment.HabitatTiles = [currEnv habitatTile];
-            playerObj.Enviroment.PreviewTile = [];
-
-            gameObj.HabitatTiles(tileIdx).Status = StatusEnum.Played;
+            
+            if isPlaceableTileCoord(playerObj.Environment, coordinate)
+                habitatTile.Coordinate = coordinate;
+                currEnv = playerObj.Environment.HabitatTiles;
+                playerObj.Environment.HabitatTiles = [currEnv habitatTile];
+                playerObj.Environment.PreviewTile = HabitatTile.empty;
+                playerObj.TilePlaced = true;
+                gameObj.HabitatTiles(tileIdx).Status = StatusEnum.Played;
+            else
+                fprintf('Coordinate not a valid play coord!\n');
+            end
         end
 
         function [gameObj, playerObj] = placeWildlifeToken(gameObj, playerObj, gameTokenIdx, wildlifeToken, coordinate)
             % Find Habitat Tile with that coordinate
-            playerTiles = playerObj.Environment.HabitatTiles;
+            playerTiles = [playerObj.Environment.StarterHabitatTile playerObj.Environment.HabitatTiles];
 
             i = 0; tileFound = false;
-            while i <= length(playerTiles) && ~tileFound
+            while i < length(playerTiles) && ~tileFound
                 i = i + 1;
                 if all(playerTiles(i).Coordinate == coordinate)
+                    tile = playerTiles(i);
                     tileFound = true;
                 end
             end
 
-            % Place wildlife token on it
-            playerObj.Environent.HabitatTiles(i).WildlifeToken = wildlifeToken;
+            if tileFound % Hopefully this is never false
+                if ismember(wildlifeToken.Animal, tile.CompatibleWildlife)
+                    % Place wildlife token on it
+                    playerObj.Environment.HabitatTiles(i).WildlifeToken = wildlifeToken;
+                    playerObj.Environment.PreviewToken = WildlifeToken.empty;
 
-            % Increment Nature Token if Keystone
-            if isKeystoneTile(playerObj.Environent.HabitatTiles(i))
-                takeNatureToken(playerObj, gameObj);
+                    % Increment Nature Token if Keystone
+                    if isKeystoneTile(playerObj.Environment.HabitatTiles(i))
+                        takeNatureToken(playerObj, gameObj);
+                    end
+
+                    % Change gameObj
+                    gameObj.WildlifeTokens(gameTokenIdx).Status = StatusEnum.Played;
+                else
+                    fprintf('Token not compatible on this tile\n');
+                end
+            else
+                fprintf('Tile not found at (%d, %d, %d)\n', coordinate);
             end
-
-            % Change gameObj
-            gameObj.WildlifeTokens(gameTokenIdx).Status = StatusEnum.Played;
         end
 
         function [gameObj, playerObj] = discardWildlifeToken(gameObj, playerObj, tokenIdx)
