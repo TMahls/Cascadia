@@ -19,7 +19,7 @@ classdef HabitatTile
             obj.Orientation = 1; 
 
             % Give it a NaN starting coordinate
-            obj.Coordinate = uint8([255,255,255]);
+            obj.Coordinate = uint8([127,127,127]);
         end
 
         function tf = isKeystoneTile(obj)

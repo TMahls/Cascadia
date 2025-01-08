@@ -101,6 +101,8 @@ classdef Game
             currPlayer = obj.Players(obj.PlayerTurn);
 
             if ismember(action, currPlayer.AvailableActions)
+                originalPlayerIdx = obj.PlayerTurn;
+
                 % Execute selected move
                 [obj, currPlayer] = MovesEnum.executeMove(obj, currPlayer, action, moveMetadata);
 
@@ -115,7 +117,7 @@ classdef Game
 
                 if turnOver || gameOver
                     % Reset once-per-turn actions
-                    obj.Players(obj.PlayerTurn) = resetTurnFlags(obj.Players(obj.PlayerTurn));
+                    currPlayer = resetTurnFlags(currPlayer);
 
                     % Update player's score
                     % We do this every turn for the purposes of the AI.
@@ -156,7 +158,7 @@ classdef Game
                     end
                 end  
                 
-                obj.Players(obj.PlayerTurn) = currPlayer;
+                obj.Players(originalPlayerIdx) = currPlayer;
             else
                 fprintf('Action not available to player!\n');
             end

@@ -15,7 +15,7 @@ classdef Player
         SelectedTileIdx (1,1) uint8
         SelectedTokenIdx (1,1) uint8
         TilePlaced (1,1) logical
-        TokenDiscarded (1,1) logical
+        TokenPlaced (1,1) logical
     end
 
     methods

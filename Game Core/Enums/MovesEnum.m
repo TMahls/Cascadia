@@ -29,7 +29,7 @@ classdef MovesEnum < uint8
         function moveList = checkMoveAvailability(gameObj, playerObj)
             moveList = MovesEnum.empty;
 
-            if ~playerObj.TokenDiscarded
+            if ~playerObj.TokenPlaced
                 if ~playerObj.TilePlaced
                     % Stage 1
                     if MovesEnum.checkVoluntaryOverpopulationWipe(gameObj, playerObj)
@@ -249,27 +249,37 @@ classdef MovesEnum < uint8
             % Find Habitat Tile with that coordinate
             playerTiles = [playerObj.Environment.StarterHabitatTile playerObj.Environment.HabitatTiles];
 
-            i = 0; tileFound = false;
+            i = 0; tileFound = false; starterTile = false;
             while i < length(playerTiles) && ~tileFound
                 i = i + 1;
                 if all(playerTiles(i).Coordinate == coordinate)
                     tile = playerTiles(i);
                     tileFound = true;
+                    if i <= length(playerObj.Environment.StarterHabitatTile)
+                        starterTile = true;
+                    end
                 end
             end
 
             if tileFound % Hopefully this is never false
                 if ismember(wildlifeToken.Animal, tile.CompatibleWildlife)
                     % Place wildlife token on it
-                    playerObj.Environment.HabitatTiles(i).WildlifeToken = wildlifeToken;
+                    if starterTile
+                        playerObj.Environment.StarterHabitatTile(i).WildlifeToken = wildlifeToken;
+                    else
+                        idx = i - length(playerObj.Environment.StarterHabitatTile);
+                        playerObj.Environment.HabitatTiles(idx).WildlifeToken = wildlifeToken;
+                    end
+                                      
                     playerObj.Environment.PreviewToken = WildlifeToken.empty;
 
                     % Increment Nature Token if Keystone
-                    if isKeystoneTile(playerObj.Environment.HabitatTiles(i))
+                    if isKeystoneTile(playerTiles(i))
                         takeNatureToken(playerObj, gameObj);
                     end
 
                     % Change gameObj
+                    playerObj.TokenPlaced = true;
                     gameObj.WildlifeTokens(gameTokenIdx).Status = StatusEnum.Played;
                 else
                     fprintf('Token not compatible on this tile\n');
@@ -281,7 +291,7 @@ classdef MovesEnum < uint8
 
         function [gameObj, playerObj] = discardWildlifeToken(gameObj, playerObj, tokenIdx)
             gameObj.WildlifeTokens(tokenIdx).Status = StatusEnum.Hidden;
-            playerObj.TokenDiscarded = true;
+            playerObj.TokenPlaced = true;
         end
     end
 

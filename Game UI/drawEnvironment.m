@@ -20,10 +20,11 @@ if ~isempty(currentTile) && isPlaceableTileCoord(environment, currentTile.Coordi
     drawHabitatTile(envAxes, centerCoords, hexSideLength, currentTile, -1);
 elseif ~isempty(currentTile) && ~isempty(environment.PreviewToken) &&...
         isPlaceableTokenCoord(environment, currentTile.Coordinate) && playerObj.TilePlaced 
-    currentTile.Coordinate
     wildlifeToken = environment.PreviewToken;
     centerCoords = HabitatTile.hex2cart(currentTile.Coordinate, hexSideLength);
     drawWildlifeToken(envAxes, centerCoords, hexSideLength, wildlifeToken, -1)
 end
+
+axis(envAxes,'equal'); % Prevents stretching
 
 end

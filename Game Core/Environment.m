@@ -54,7 +54,7 @@ classdef Environment
             tile = HabitatTile();
             allTiles = [obj.StarterHabitatTile, obj.HabitatTiles];
             i = 1; tileFound = false;
-            while i < length(allTiles) && ~tileFound
+            while i <= length(allTiles) && ~tileFound
                 if all(hexCoords == allTiles(i).Coordinate)
                     tile = allTiles(i);
                 end
