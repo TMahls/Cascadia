@@ -17,7 +17,7 @@ classdef Game
         TurnCount uint8 % How many turns has the game gone?
         PlayerTurn uint8 % Who's turn is it?
         CurrentScores table % Scores for current turn
-        Status char % Current game status
+        StatusMsg char % Current game status
     end
 
     methods

@@ -3,8 +3,7 @@ function drawHabitatTile(ax, centerCoords, sideLength, habitatTile, id)
 %   id - Tile type
 %   If > 0, we assume this is a center tile and give it a UserData of id
 %   If 0, a normal environment tile, no user data applied
-%   If -1, a preview tile and we make it semitransparent with gold border. 
-%   If -2, a played wildlife token and we give it a red border
+%   If -1, a preview tile and we give it a thick gold border. 
 
 colors = ColorEnum.empty;
 for i = 1:length(habitatTile.Terrain)
@@ -32,60 +31,61 @@ end
 
 plotPolyshapeComponents(ax, pshapes, colors, id);
 
+plotCompatibleToken = false;
 % Plot Wildlife Tokens or Compatibility Markers
-nPoints = 20; % A dodecagon is basically a circle right? :)
-
 if isempty(habitatTile.WildlifeToken.Animal)
     % Plot Compatible wildlife markers
+    plotCompatibleToken = true;
     colors = ColorEnum.empty;
+    animals = AnimalEnum.empty;
     for i = 1:length(habitatTile.CompatibleWildlife)
         colors(i) = getColor(habitatTile.CompatibleWildlife(i));
+        animals(i) = habitatTile.CompatibleWildlife(i);
     end
     
-    pshapes = polyshape.empty;
     if isscalar(colors)
         % 1 Compatible Wildlife - One circle
-        pshapes = nsidedpoly(nPoints,'Center',centerCoords,'SideLength',sideLength/15);
     elseif length(colors) == 2
         % 2 Compatible Wildlife
-        pshapes(1) = nsidedpoly(nPoints,'Center',[centerCoords(1), centerCoords(2) + sideLength/5],'SideLength',sideLength/15);
-        pshapes(2) = nsidedpoly(nPoints,'Center',[centerCoords(1), centerCoords(2) - sideLength/5],'SideLength',sideLength/15);
+        centerCoords = [centerCoords(1), centerCoords(2) + sideLength/6; ...
+            centerCoords(1), centerCoords(2) - sideLength/6];
     elseif length(colors) == 3
         % 3 Compatible Wildlife
         innerTriangle = nsidedpoly(3,'Center',centerCoords,'SideLength',sideLength/3);
-        vertices = innerTriangle.Vertices;
-        pshapes(1) = nsidedpoly(nPoints,'Center',vertices(1,:),'SideLength',sideLength/15);
-        pshapes(2) = nsidedpoly(nPoints,'Center',vertices(2,:),'SideLength',sideLength/15);
-        pshapes(3) = nsidedpoly(nPoints,'Center',vertices(3,:),'SideLength',sideLength/15);
+        centerCoords = innerTriangle.Vertices;
     end
-
-    plotPolyshapeComponents(ax, pshapes, colors, 0);
 else
     % Plot played token
-    colors = getColor(habitatTile.WildlifeToken.Animal);
-    pshapes = nsidedpoly(nPoints,'Center',centerCoords,'SideLength',sideLength/8);
+    animals = habitatTile.WildlifeToken.Animal;
 end
 
-
+ids = zeros(size(animals));
+for i = 1:length(animals)
+    if plotCompatibleToken
+        currToken = WildlifeToken();
+        currToken.Animal = habitatTile.CompatibleWildlife(i); 
+        ids(i) = -2;
+    else
+        currToken = habitatTile.WildlifeToken;
+        ids(i) = 0;
+    end
+    drawWildlifeToken(ax, centerCoords(i,:), sideLength, currToken, ids(i));
+end
 end
 
 function plotPolyshapeComponents(ax, pshapes, faceColors, id)
-for n = 1:length(pshapes)
-    currColor = faceColors(n).rgbValues;
+for i = 1:length(pshapes)
+    currColor = faceColors(i).rgbValues;
     if id >= 0
-        pgon = plot(ax, pshapes(n), 'FaceColor', currColor, 'FaceAlpha',1,...
+        pgon = plot(ax, pshapes(i), 'FaceColor', currColor, 'FaceAlpha',1,...
             'EdgeColor',ColorEnum.Black.rgbValues);
         if id > 0
             pgon.UserData = id;
         end
-    elseif abs(id - -1) < 1e-8
-        % Preview tile
-        pgon = plot(ax, pshapes(n), 'FaceColor', currColor, 'FaceAlpha',1,...
-            'EdgeColor',ColorEnum.Gold.rgbValues, 'LineWidth', 3);
     else
-        % Played wildlife token 
-        pgon = plot(ax, pshapes(n), 'FaceColor', currColor, 'FaceAlpha',1,...
-            'EdgeColor',ColorEnum.Red.rgbValues, 'LineWidth', 3);
+        % Preview tile
+        pgon = plot(ax, pshapes(i), 'FaceColor', currColor, 'FaceAlpha',1,...
+            'EdgeColor',ColorEnum.Gold.rgbValues, 'LineWidth', 3);
     end
 
     pgon.HitTest = 'off'; % Clicking will trigger UIAxes callback

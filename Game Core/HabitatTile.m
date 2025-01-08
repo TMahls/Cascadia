@@ -14,8 +14,12 @@ classdef HabitatTile
     methods
         function obj = HabitatTile()
             %HABITATTILE Construct an instance of this class
+                     
             % Ensure we start at the default (upright) orientation
             obj.Orientation = 1; 
+
+            % Give it a NaN starting coordinate
+            obj.Coordinate = uint8([255,255,255]);
         end
 
         function tf = isKeystoneTile(obj)

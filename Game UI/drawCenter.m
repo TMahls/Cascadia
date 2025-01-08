@@ -14,9 +14,8 @@ for i = 1:length(gameObj.CenterTileIdx)
 
     % Draw Wildlife Token circle
     centerY = -hexSideLength;
-    shapeSize = 18;
     currentToken = gameObj.WildlifeTokens(gameObj.CenterTokenIdx(i));   
-    drawWildlifeToken(centerAxes, [centerX, centerY], shapeSize, currentToken, i);
+    drawWildlifeToken(centerAxes, [centerX, centerY], hexSideLength, currentToken, i);
 end
 
 end
