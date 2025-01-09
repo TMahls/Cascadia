@@ -173,7 +173,9 @@ classdef Game
             centerTokenAnimals = AnimalEnum.empty;
             idx = 1;
             for i = tokenIndexes
-                centerTokenAnimals(idx) = obj.WildlifeTokens(i).Animal;
+                if i ~= 0 % We could have a partially empty center when we check this
+                    centerTokenAnimals(idx) = obj.WildlifeTokens(i).Animal;
+                end
                 idx = idx + 1;
             end
 

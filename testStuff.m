@@ -42,7 +42,10 @@ drawCenter(obj);
 % end
 % 
 % % See habitat tiles
-% for nHabitatTile = 1:length(obj.HabitatTiles)
-%     obj.HabitatTiles(nHabitatTile)
-% end
+for nHabitatTile = 1:length(obj.HabitatTiles)
+    tile = obj.HabitatTiles(nHabitatTile);
+    if tile.Status == StatusEnum.InCenter
+        tile
+    end
+end
 

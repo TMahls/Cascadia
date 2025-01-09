@@ -240,12 +240,13 @@ classdef MovesEnum < uint8
                 playerObj.Environment.PreviewTile = HabitatTile.empty;
                 playerObj.TilePlaced = true;
                 gameObj.HabitatTiles(tileIdx).Status = StatusEnum.Played;
+                gameObj.CenterTileIdx(gameObj.CenterTileIdx == tileIdx) = 0;
             else
                 fprintf('Coordinate not a valid play coord!\n');
             end
         end
 
-        function [gameObj, playerObj] = placeWildlifeToken(gameObj, playerObj, gameTokenIdx, wildlifeToken, coordinate)
+        function [gameObj, playerObj] = placeWildlifeToken(gameObj, playerObj, tokenIdx, wildlifeToken, coordinate)
             % Find Habitat Tile with that coordinate
             playerTiles = [playerObj.Environment.StarterHabitatTile playerObj.Environment.HabitatTiles];
 
@@ -275,12 +276,13 @@ classdef MovesEnum < uint8
 
                     % Increment Nature Token if Keystone
                     if isKeystoneTile(playerTiles(i))
-                        takeNatureToken(playerObj, gameObj);
+                        [gameObj, playerObj] = takeNatureToken(playerObj, gameObj);
                     end
 
                     % Change gameObj
                     playerObj.TokenPlaced = true;
-                    gameObj.WildlifeTokens(gameTokenIdx).Status = StatusEnum.Played;
+                    gameObj.WildlifeTokens(tokenIdx).Status = StatusEnum.Played;
+                    gameObj.CenterTokenIdx(gameObj.CenterTokenIdx == tokenIdx) = 0;
                 else
                     fprintf('Token not compatible on this tile\n');
                 end
