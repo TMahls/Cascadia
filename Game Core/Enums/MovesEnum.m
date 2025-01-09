@@ -51,6 +51,9 @@ classdef MovesEnum < uint8
                 else
                     % Stage 5
                     moveList = [MovesEnum.PlaceToken MovesEnum.DiscardToken];
+                    if playerObj.DecoupledTileToken
+                        moveList = [moveList MovesEnum.SelectToken];
+                    end
                 end
             end
         end
