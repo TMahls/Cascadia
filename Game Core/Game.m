@@ -118,6 +118,7 @@ classdef Game
                     % Update player's score
                     % We do this every turn for the purposes of the AI.
                     % It'll want to know ;)
+                    obj.CurrentScores = calculateAllScores(obj);
 
                     gameOver = (countTiles(obj, StatusEnum.Hidden) == 0);
 

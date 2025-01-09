@@ -1,6 +1,5 @@
-classdef AnimalScoreRule
-    %ANIMALSCORERULE Summary of this class goes here
-    %   Detailed explanation goes here
+classdef WildlifeScoreObjective
+    %ANIMALSCORERULE Parent class of wildlife scoring objectives
     
     properties
         Animal
@@ -8,7 +7,7 @@ classdef AnimalScoreRule
     end
     
     methods
-        function obj = AnimalScoreRule(inputArg1,inputArg2)
+        function obj = WildlifeScoreObjective(inputArg1,inputArg2)
             %ANIMALSCORERULE Construct an instance of this class
             %   Detailed explanation goes here
             obj.Property1 = inputArg1 + inputArg2;

@@ -6,9 +6,14 @@ obj = Game;
 obj = obj.startNewGame(3);
 toc
 
+% Scoring
+obj.CurrentScores = calculateAllScores(obj);
+
+scoreTable = obj.CurrentScores
+
 
 % Test out graphics
-drawCenter(obj);
+%drawCenter(obj);
 
 % Try out moves
 % for n = 1:100
@@ -31,9 +36,6 @@ drawCenter(obj);
 % end
 
 
-
-
-
 % See starter Tiles
 % for nStarterTile = 1:5
 %     for tileNum = 1:3
@@ -42,10 +44,9 @@ drawCenter(obj);
 % end
 % 
 % % See habitat tiles
-for nHabitatTile = 1:length(obj.HabitatTiles)
-    tile = obj.HabitatTiles(nHabitatTile);
-    if tile.Status == StatusEnum.InCenter
-        tile
-    end
-end
-
+% for nHabitatTile = 1:length(obj.HabitatTiles)
+%     tile = obj.HabitatTiles(nHabitatTile);
+%     if tile.Status == StatusEnum.InCenter
+%         tile
+%     end
+% end
