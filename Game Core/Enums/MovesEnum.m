@@ -105,7 +105,7 @@ classdef MovesEnum < uint8
 
                 case MovesEnum.DiscardToken
                     tokenCenterIdx = moveMetadata;
-                    tokenGameIdx = gameObj.CenterTileIdx(tokenCenterIdx);
+                    tokenGameIdx = gameObj.CenterTokenIdx(tokenCenterIdx);
 
                     [gameObj, playerObj] = MovesEnum.discardWildlifeToken(gameObj, playerObj, tokenGameIdx);
             end

@@ -54,6 +54,7 @@ classdef Player
             obj.SelectedTileIdx = 0;
             obj.SelectedTokenIdx = 0;
             obj.TilePlaced = false;
+            obj.TokenPlaced = false;
         end
 
     end
