@@ -65,7 +65,7 @@ classdef MovesEnum < uint8
                     end
 
                 case MovesEnum.SpendNatureToken
-                    [gameObj, playerObj] = MovesEnum.spendNatureToken(playerObj);
+                    [gameObj, playerObj] = MovesEnum.spendNatureToken(gameObj, playerObj);
 
                 case MovesEnum.SelectTile
                     tileCenterIdx = moveMetadata;
@@ -139,7 +139,7 @@ classdef MovesEnum < uint8
             % Find the indexes of those tokens
             animalReplaceIdx = [];
             if n < (gameObj.GameParameters.CenterTiles - 1)
-                disp('Cannot do an overpopulation wipe');
+                gameObj.StatusMsg = 'Cannot do an overpopulation wipe';
             else
                 for i = 1:length(centerIdx)
                     currToken = gameObj.WildlifeTokens(centerIdx(i));
@@ -188,7 +188,7 @@ classdef MovesEnum < uint8
                 tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
                 gameObj.NatureTokens(tokenIdx) = 0;
             else
-                fprintf('Nature token already spent for this purpose!\n');
+                gameObj.StatusMsg = 'Nature token already spent for this purpose!';
             end
 
             % Option 2: Wipe any wildlife tokens (player must select, do this later.)
@@ -232,7 +232,7 @@ classdef MovesEnum < uint8
         end
 
         function [gameObj, playerObj] = placeHabitatTile(playerObj, gameObj, tileIdx, habitatTile, coordinate)
-            
+
             if isPlaceableTileCoord(playerObj.Environment, coordinate)
                 habitatTile.Coordinate = coordinate;
                 currEnv = playerObj.Environment.HabitatTiles;
@@ -242,7 +242,7 @@ classdef MovesEnum < uint8
                 gameObj.HabitatTiles(tileIdx).Status = StatusEnum.Played;
                 gameObj.CenterTileIdx(gameObj.CenterTileIdx == tileIdx) = 0;
             else
-                fprintf('Coordinate not a valid play coord!\n');
+                gameObj.StatusMsg = 'Coordinate not a valid play coord!';
             end
         end
 
@@ -271,7 +271,7 @@ classdef MovesEnum < uint8
                         idx = i - length(playerObj.Environment.StarterHabitatTile);
                         playerObj.Environment.HabitatTiles(idx).WildlifeToken = wildlifeToken;
                     end
-                                      
+
                     playerObj.Environment.PreviewToken = WildlifeToken.empty;
 
                     % Increment Nature Token if Keystone
@@ -284,16 +284,17 @@ classdef MovesEnum < uint8
                     gameObj.WildlifeTokens(tokenIdx).Status = StatusEnum.Played;
                     gameObj.CenterTokenIdx(gameObj.CenterTokenIdx == tokenIdx) = 0;
                 else
-                    fprintf('Token not compatible on this tile\n');
+                    gameObj.StatusMsg = 'Token not compatible on this tile';
                 end
             else
-                fprintf('Tile not found at (%d, %d, %d)\n', coordinate);
+                gameObj.StatusMsg = sprintf('Tile not found at (%d, %d, %d)\n', coordinate);
             end
         end
 
         function [gameObj, playerObj] = discardWildlifeToken(gameObj, playerObj, tokenIdx)
-            gameObj.WildlifeTokens(tokenIdx).Status = StatusEnum.Hidden;
             playerObj.TokenPlaced = true;
+            gameObj.WildlifeTokens(tokenIdx).Status = StatusEnum.Played;
+            gameObj.CenterTokenIdx(gameObj.CenterTokenIdx == tokenIdx) = 0;
         end
     end
 

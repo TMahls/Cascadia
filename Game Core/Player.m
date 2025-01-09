@@ -31,7 +31,7 @@ classdef Player
             % Auto overpopulation wipe
             numAnimals = gameObj.countSameCenterAnimals();          
             if numAnimals == gameObj.GameParameters.CenterTiles 
-                disp('Auto overpopulation wipe!')          
+                gameObj.StatusMsg = 'Auto overpopulation wipe!';          
                 playerObj.AvailableActions = MovesEnum.OverpopulationWipe;
             else
                 playerObj.AvailableActions = MovesEnum.checkMoveAvailability(gameObj, playerObj);

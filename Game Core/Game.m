@@ -88,7 +88,7 @@ classdef Game
             obj.TurnCount = 1;
             obj.PlayerTurn = 1;
             obj.CurrentScores = obj.GameParameters.initScoreTable(obj.Players);
-            fprintf('Game started!\n');
+            obj.StatusMsg = 'Game started!';
 
             [obj, obj.Players(obj.PlayerTurn)] = ...
                 obj.Players(obj.PlayerTurn).getAvailableActions(obj);
@@ -97,25 +97,21 @@ classdef Game
         function obj = playerAction(obj, action, moveMetadata)
             %PLAYERACTION Summary of this method goes here
             % Callback triggered by a player selecting a move
-            disp('ACTION!');
             currPlayer = obj.Players(obj.PlayerTurn);
 
             if ismember(action, currPlayer.AvailableActions)
                 originalPlayerIdx = obj.PlayerTurn;
 
                 % Execute selected move
+                obj.StatusMsg = [];
                 [obj, currPlayer] = MovesEnum.executeMove(obj, currPlayer, action, moveMetadata);
 
                 % Check if player can continue turn, or if game is over
                 [obj, currPlayer] = currPlayer.getAvailableActions(obj);
-                turnOver = false; gameOver = false;
-                if countTiles(obj, StatusEnum.Hidden) == 0
-                    gameOver = true;
-                elseif isempty(currPlayer.AvailableActions)
-                    turnOver = true;
-                end
 
-                if turnOver || gameOver
+                turnOver = isempty(currPlayer.AvailableActions);
+
+                if turnOver
                     % Reset once-per-turn actions
                     currPlayer = resetTurnFlags(currPlayer);
 
@@ -123,8 +119,11 @@ classdef Game
                     % We do this every turn for the purposes of the AI.
                     % It'll want to know ;)
 
+                    gameOver = (countTiles(obj, StatusEnum.Hidden) == 0);
+
                     if gameOver
                         % Print scores, announce winner
+                        obj.StatusMsg = 'Game over!';
                     elseif turnOver
                         % Replace Center
                         tileIdx = randi(length(obj.HabitatTiles));
@@ -150,17 +149,20 @@ classdef Game
                         % Prepare for next player's turn
                         obj.TurnCount = obj.TurnCount + 1;
                         obj.PlayerTurn = mod(obj.PlayerTurn, length(obj.Players)) + 1;
-                        fprintf('Player %d''s Turn\n', obj.PlayerTurn);
+                        obj.StatusMsg = sprintf('Player %d''s Turn. %d Turns Remaining', obj.PlayerTurn, ...
+                            countTiles(obj, StatusEnum.Hidden) + 1);
                         [obj, obj.Players(obj.PlayerTurn)] = ...
                             obj.Players(obj.PlayerTurn).getAvailableActions(obj);
-                    else
-                        fprintf('Player %d Continues Turn\n', obj.PlayerTurn);
                     end
-                end  
-                
+                else
+                    if isempty(obj.StatusMsg)
+                        obj.StatusMsg = sprintf('Player %d Continues Turn', obj.PlayerTurn);
+                    end
+                end
+
                 obj.Players(originalPlayerIdx) = currPlayer;
             else
-                fprintf('Action not available to player!\n');
+                obj.StatusMsg = 'Action not available to player!';
             end
         end
 
