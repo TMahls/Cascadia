@@ -3,8 +3,8 @@ classdef WildlifeToken
     %   Detailed explanation goes here
     
     properties
-        Animal
-        Status % Hidden (in bag), used by player, or in center
+        Animal AnimalEnum
+        Status StatusEnum % Hidden (in bag), used by player, or in center
     end
     
     methods

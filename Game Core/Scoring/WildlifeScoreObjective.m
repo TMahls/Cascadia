@@ -7,10 +7,9 @@ classdef WildlifeScoreObjective
     end
     
     methods
-        function obj = WildlifeScoreObjective(inputArg1,inputArg2)
+        function obj = WildlifeScoreObjective()
             %ANIMALSCORERULE Construct an instance of this class
             %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
         end
         
         

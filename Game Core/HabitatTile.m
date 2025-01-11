@@ -3,9 +3,9 @@ classdef HabitatTile
     %   Detailed explanation goes here
 
     properties
-        Terrain % 1-2 array Enumeration Terrain
-        CompatibleWildlife % 1-3 array of Animal Enum
-        Status % Out of play, hidden, used by player, in center
+        Terrain TerrainEnum % 1-2 array Enumeration Terrain
+        CompatibleWildlife AnimalEnum % 1-3 array of Animal Enum
+        Status StatusEnum % Out of play, hidden, used by player, in center
         Orientation (1,1) uint8 % When in play, for non-keystone
         Coordinate (1,3) int8 % When in play
         WildlifeToken (1,1) WildlifeToken % When in play

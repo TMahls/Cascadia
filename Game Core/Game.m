@@ -9,13 +9,15 @@ classdef Game
         HabitatTiles HabitatTile % Array of HabitatTile
         WildlifeTokens WildlifeToken % Array of WildlifeToken
         NatureTokens uint8 % Array of size NumWildlifeTokens, value is which player owns it (0 default)
+        
 
         CenterTileIdx uint8 % Idx in 'HabitatTiles' of center tiles (in center order)
         CenterTokenIdx uint8 % Idx in 'NatureTokens' of center tiles (in center order)
         % 0 indicates empty center
 
+        ScoringRules uint8 % Which scoring rule we're using
         TurnCount uint8 % How many turns has the game gone?
-        PlayerTurn uint8 % Who's turn is it?
+        PlayerTurn uint8 % Whose turn is it?
         CurrentScores table % Scores for current turn
         StatusMsg char % Current game status
     end
@@ -32,10 +34,22 @@ classdef Game
             obj.StarterHabitatTiles = initStarterTiles(obj.GameParameters);
         end
 
-        function obj = startNewGame(obj, nPlayers)
+        function obj = startNewGame(obj, nPlayers, options)
             %STARTNEWGAME Summary of this method goes here
-            %   Detailed explanation goes here
+            %  vararg in - game mode (default easy), custom scoring rules
 
+            arguments 
+                obj Game
+                nPlayers (1,1) double
+                options.GameMode = GameModeEnum.EasyRules
+                options.CustomRules string = ""
+                options.PlayerNames string = ""
+            end
+
+            % Set scoring rules
+            obj.ScoringRules = obj.GameParameters.initScoringRules(...
+                options.GameMode, options.CustomRules);
+            
             % Reset players and tokens
             obj = clearPlayersAndTokens(obj);
 

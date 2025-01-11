@@ -51,6 +51,7 @@ classdef GameParameters
 
         % Score info
         PointsPerNatureToken = 1;
+        ScoreVariantsPerAnimal = 4; % A, B, C, D
     end
 
     methods
@@ -66,6 +67,35 @@ classdef GameParameters
         function numTiles = calculateTotalHabitatTiles(obj)
             numTiles = obj.KeystoneTilesPerTerrain * TerrainEnum.NumTerrains + ...
                 obj.DualTerrainTilesPerCombo * 0.5 * double(TerrainEnum.NumTerrains * (TerrainEnum.NumTerrains - 1));
+        end
+
+        function scoringRules = initScoringRules(obj, gameMode, customRules)
+            % Default - EZ mode
+            scoringRules = ones(1,AnimalEnum.NumAnimals);
+
+            switch gameMode
+                case GameModeEnum.RandomRules
+                    scoringRules = randi(obj.ScoreVariantsPerAnimal,[1 AnimalEnum.NumAnimals]);
+                case GameModeEnum.FamilyVariant
+                    scoringRules = GameModeEnum.FamilyVariant;
+                case GameModeEnum.IntermediateVariant
+                    scoringRules = GameModeEnum.IntermediateVariant;
+                case GameModeEnum.CustomRules
+                    try
+                        for i = 1:length(customRules)
+                            letterVal = double(char(customRules(i))) - 64;
+                            if letterVal >= 1 && letterVal <= obj.ScoreVariantsPerAnimal
+                                scoringRules(i) = double(char(customRules(i))) - 64;
+                            else
+                                throw(MException('',''));
+                            end
+                        end
+                    catch
+                        error(['Custom scoring selected but rules were not provided' ...
+                            ' in proper format. Correct format:'...
+                            ' startNewGame(obj,3,"GameMode",GameModeEnum.CustomRules,"CustomRules",["A","A","D","C","B"])']);
+                    end
+            end
         end
 
         function starterTiles = initStarterTiles(obj)
@@ -138,7 +168,7 @@ classdef GameParameters
 
                         for n = 1:obj.DualTerrainTilesPerCombo
                             habitatTiles(idx) = HabitatTile();
-                            habitatTiles(idx).Terrain = [terrain1, terrain2];                          
+                            habitatTiles(idx).Terrain = [terrain1, terrain2];
                             habitatTiles(idx).CompatibleWildlife = compatibleWildlifeArr{n,:};
                             habitatTiles(idx).Status = StatusEnum.OutOfPlay;
                             idx = idx + 1;
@@ -185,12 +215,12 @@ classdef GameParameters
             for i = 1:uint8(AnimalEnum.NumAnimals)
                 scoreTypes{i} = [char(AnimalEnum(i - 1)) ' Score'];
             end
-            
+
             scoreTypes{i + 1} = 'Wildlife Total';
             idx = i + 2;
             for i = 1:uint8(TerrainEnum.NumTerrains)
                 scoreTypes{idx} = ['Connected ' char(TerrainEnum(i - 1)) 's'];
-                scoreTypes{idx + 1} = [char(TerrainEnum(i - 1)) ' Bonus']; 
+                scoreTypes{idx + 1} = [char(TerrainEnum(i - 1)) ' Bonus'];
                 idx = idx + 2;
             end
             scoreTypes{idx} = 'Habitat Total';
@@ -225,7 +255,7 @@ classdef GameParameters
         function compatibleWildlifeArr = ...
                 createWildlifeArr(~, dualTerrainTable, terrain1, terrain2)
 
-            i = 1; colIdx = 0; 
+            i = 1; colIdx = 0;
             % Made this efficient for no reason
             while i <= length(dualTerrainTable.Properties.VariableNames) && colIdx == 0
                 currentColumn = dualTerrainTable.Properties.VariableNames{i};
@@ -233,7 +263,7 @@ classdef GameParameters
                 currentT1 = currentColumn(1:(delimIdx-1));
                 currentT2 = currentColumn((delimIdx+1):end);
                 if strcmp(currentT1,terrain1) && strcmp(currentT2,terrain2) || ...
-                       strcmp(currentT2,terrain1) && strcmp(currentT1,terrain2) 
+                        strcmp(currentT2,terrain1) && strcmp(currentT1,terrain2)
                     colIdx = i;
                 end
                 i = i + 1;

@@ -4,11 +4,28 @@ function scoreTable = calculateAllScores(gameObj)
 
 scoreTable = gameObj.CurrentScores;
 
-% Calculate wildlife scores
+% Calculate scores for that row
+for j = 1:length(gameObj.Players)
 
-% Calculate habitat scores
+    % Calculate wildlife scores
+    for i = 1:uint8(AnimalEnum.NumAnimals)
+        currAnimal = AnimalEnum(i - 1);
 
-% Nature tokens 
+        % Find table row containing that animal
+
+        % Get which score cards we're using
+        scoreClassName = gameObj.ScoringRules(uint8(currAnimal) + 1);
+
+
+
+    end
+
+
+    % Calculate habitat scores
+
+    % Nature tokens
+
+end
 
 % Assign habitat bonuses
 
