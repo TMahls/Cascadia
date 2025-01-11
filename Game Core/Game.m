@@ -139,6 +139,7 @@ classdef Game
                     % Update player's score
                     % We do this every turn for the purposes of the AI.
                     % It'll want to know ;)
+                    obj.Players(originalPlayerIdx) = currPlayer;
                     obj.CurrentScores = calculateAllScores(obj);
 
                     gameOver = (countTiles(obj, StatusEnum.Hidden) == 0);
@@ -183,7 +184,7 @@ classdef Game
                         obj.StatusMsg = sprintf('Player %d Continues Turn', obj.PlayerTurn);
                     end
                 end
-
+                
                 obj.Players(originalPlayerIdx) = currPlayer;
             else
                 obj.StatusMsg = 'Action not available to player!';
