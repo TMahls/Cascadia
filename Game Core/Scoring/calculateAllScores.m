@@ -4,6 +4,12 @@ function scoreTable = calculateAllScores(gameObj)
 
 scoreTable = gameObj.CurrentScores;
 
+familyVariant = isscalar(gameObj.ScoringRules) && ...
+    gameObj.ScoringRules == GameModeEnum.FamilyVariant;
+
+intermediateVariant = isscalar(gameObj.ScoringRules) && ...
+    gameObj.ScoringRules == GameModeEnum.IntermediateVariant;
+
 for i = 1:length(gameObj.Players)
     currPlayer = gameObj.Players(i);
     currEnv = currPlayer.Environment;
@@ -15,7 +21,11 @@ for i = 1:length(gameObj.Players)
         % Find table row containing that animal
 
         % Get which score card we're using
-        scoreNum = gameObj.ScoringRules(uint8(currAnimal) + 1);
+        if ~isscalar(gameObj.ScoringRules)
+            scoreNum = gameObj.ScoringRules(uint8(currAnimal) + 1);
+        else % Family or intermediate variant
+            scoreNum = gameObj.ScoringRules;
+        end
         className = gameObj.GameParameters.getScoringClassName(currAnimal, scoreNum)
 
 

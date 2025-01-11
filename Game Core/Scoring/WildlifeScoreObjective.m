@@ -3,7 +3,6 @@ classdef WildlifeScoreObjective
     
     properties
         Animal
-        PointsTable
     end
     
     methods

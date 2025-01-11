@@ -1,13 +1,13 @@
-classdef Bear_Rule_A < WildlifeScoreObjective
+classdef IntermediateVariantRule < WildlifeScoreObjective
     
     properties
         
     end
     
     methods
-        function obj = Bear_Rule_A()
+        function obj = IntermediateVariantRule()
 
-        end
+        end 
 
         function score = calculateScore(obj, environment)
             score = 0;

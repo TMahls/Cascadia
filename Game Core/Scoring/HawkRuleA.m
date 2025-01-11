@@ -1,13 +1,13 @@
-classdef Salmon_Rule_A < WildlifeScoreObjective
+classdef HawkRuleA < WildlifeScoreObjective
     
     properties
         
     end
     
     methods
-        function obj = Salmon_Rule_A()
+        function obj = HawkRuleA()
 
-        end 
+        end
 
         function score = calculateScore(obj, environment)
             score = 0;

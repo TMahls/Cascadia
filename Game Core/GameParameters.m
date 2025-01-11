@@ -98,9 +98,18 @@ classdef GameParameters
             end
         end
 
-        function className = getScoringClassName(~, animal, scoringRuleNumber)            
+        function className = getScoringClassName(~, animal, scoringRuleNumber)
+            className = '';
+            if isa(scoringRuleNumber,'GameModeEnum')
+                if scoringRuleNumber == GameModeEnum.FamilyVariant
+                    className = 'FamilyVariantRule';
+                elseif scoringRuleNumber == GameModeEnum.IntermediateVariant
+                    className = 'IntermediateVariantRule';
+                end
+            else
             scoringRuleLetter = char(scoringRuleNumber + 64);
-            className = [char(animal) '_Rule_' scoringRuleLetter];
+            className = [char(animal) 'Rule' scoringRuleLetter];
+            end
         end
 
         function starterTiles = initStarterTiles(obj)
