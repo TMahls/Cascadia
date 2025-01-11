@@ -8,18 +8,20 @@ classdef Game
         StarterHabitatTiles HabitatTile % Array of 'StartHabitatTiles', which is an array of 3 tiles...
         HabitatTiles HabitatTile % Array of HabitatTile
         WildlifeTokens WildlifeToken % Array of WildlifeToken
-        NatureTokens uint8 % Array of size NumWildlifeTokens, value is which player owns it (0 default)
-        
+        NatureTokens uint8 % Array of size NumWildlifeTokens, value is which player owns it (0 default)        
 
         CenterTileIdx uint8 % Idx in 'HabitatTiles' of center tiles (in center order)
         CenterTokenIdx uint8 % Idx in 'NatureTokens' of center tiles (in center order)
         % 0 indicates empty center
 
-        ScoringRules uint8 % Which scoring rule we're using
         TurnCount uint8 % How many turns has the game gone?
         PlayerTurn uint8 % Whose turn is it?
-        CurrentScores table % Scores for current turn
         StatusMsg char % Current game status
+
+        GameComplete (1,1) logical % True when game is over
+        CurrentScores table % Scores for current turn
+        ScoringRules uint8 % Which scoring rule we're using
+        HabitatBonus (1,1) logical % Whether we assign largest habitat bonuses
     end
 
     methods
@@ -32,6 +34,8 @@ classdef Game
 
             % Populate Starter Habitat Tiles
             obj.StarterHabitatTiles = initStarterTiles(obj.GameParameters);
+        
+            obj.GameComplete = true; 
         end
 
         function obj = startNewGame(obj, nPlayers, options)
@@ -44,11 +48,13 @@ classdef Game
                 options.GameMode = GameModeEnum.EasyRules
                 options.CustomRules string = ""
                 options.PlayerNames string = ""
+                options.HabitatBonus (1,1) logical = true
             end
 
             % Set scoring rules
             obj.ScoringRules = obj.GameParameters.initScoringRules(...
                 options.GameMode, options.CustomRules);
+            obj.HabitatBonus = options.HabitatBonus;
             
             % Reset players and tokens
             obj = clearPlayersAndTokens(obj);
@@ -99,6 +105,7 @@ classdef Game
             end
 
             % Start game
+            obj.GameComplete = false;
             obj.TurnCount = 1;
             obj.PlayerTurn = 1;
             obj.CurrentScores = obj.GameParameters.initScoreTable(obj.Players);
@@ -137,8 +144,10 @@ classdef Game
                     gameOver = (countTiles(obj, StatusEnum.Hidden) == 0);
 
                     if gameOver
+                        obj = endGame(obj);
+
                         % Print scores, announce winner
-                        obj.StatusMsg = 'Game over!';
+                       
                     elseif turnOver
                         % Replace Center
                         tileIdx = randi(length(obj.HabitatTiles));
@@ -179,6 +188,11 @@ classdef Game
             else
                 obj.StatusMsg = 'Action not available to player!';
             end
+        end
+
+        function obj = endGame(obj)
+             obj.GameComplete = true;
+             obj.StatusMsg = 'Game over!';
         end
 
         function nAnimals = countSameCenterAnimals(obj)

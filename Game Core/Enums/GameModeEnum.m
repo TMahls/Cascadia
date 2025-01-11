@@ -15,15 +15,15 @@ classdef GameModeEnum < uint8
         function text = getString(obj)
             switch obj
                 case GameModeEnum.EasyRules
-                    text = "Easy (A) Scoring Objectives";
+                    text = "Easy (A) Scoring Cards";
                 case GameModeEnum.RandomRules
-                    text = "Random Scoring Objectives";
+                    text = "Random Scoring Cards";
                 case GameModeEnum.FamilyVariant
                     text = "Family Variant";
                 case GameModeEnum.IntermediateVariant
                     text = "Intermediate Variant";
                 case GameModeEnum.CustomRules
-                    text = "Custom Scoring Objectives";
+                    text = "Custom Scoring Cards";
                 otherwise
                     text = "Rule text not found. This is a bug!";
             end
