@@ -1,4 +1,4 @@
-classdef BearRuleA < WildlifeScoreObjective
+classdef BearRuleA < BearRule
     
     properties
         

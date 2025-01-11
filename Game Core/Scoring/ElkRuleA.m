@@ -1,4 +1,4 @@
-classdef ElkRuleA < WildlifeScoreObjective
+classdef ElkRuleA < ElkRule
     
     properties
         

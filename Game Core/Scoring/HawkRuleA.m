@@ -1,4 +1,4 @@
-classdef HawkRuleA < WildlifeScoreObjective
+classdef HawkRuleA < HawkRule
     
     properties
         

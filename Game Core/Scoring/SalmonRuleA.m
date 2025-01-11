@@ -1,4 +1,4 @@
-classdef SalmonRuleA < WildlifeScoreObjective
+classdef SalmonRuleA < SalmonRule
     
     properties
         

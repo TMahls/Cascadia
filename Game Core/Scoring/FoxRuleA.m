@@ -1,4 +1,4 @@
-classdef FoxRuleA < WildlifeScoreObjective
+classdef FoxRuleA < FoxRule
     
     properties
         
