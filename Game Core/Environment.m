@@ -61,6 +61,12 @@ classdef Environment
                 i = i + 1;
             end
         end
+
+        function nTiles = largestCorridorSize(obj, terrain)
+            % Calculates the size of the largest contiguous block of a
+            % given terrain, in number of connected tiles.
+            nTiles = 1;
+        end
     end
 end
 

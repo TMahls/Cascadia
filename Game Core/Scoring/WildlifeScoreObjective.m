@@ -11,8 +11,7 @@ classdef WildlifeScoreObjective
             %ANIMALSCORERULE Construct an instance of this class
             %   Detailed explanation goes here
         end
-        
-        
+     
     end
 
     methods (Abstract)

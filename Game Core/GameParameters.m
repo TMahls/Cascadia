@@ -98,6 +98,11 @@ classdef GameParameters
             end
         end
 
+        function className = getScoringClassName(~, animal, scoringRuleNumber)            
+            scoringRuleLetter = char(scoringRuleNumber + 64);
+            className = [char(animal) '_Rule_' scoringRuleLetter];
+        end
+
         function starterTiles = initStarterTiles(obj)
             starterTiles = HabitatTile.empty;
             for i = 1:uint8(TerrainEnum.NumTerrains)
