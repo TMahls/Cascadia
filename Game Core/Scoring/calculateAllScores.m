@@ -21,7 +21,7 @@ for i = 1:uint8(AnimalEnum.NumAnimals)
     wildlifeScoreClass = feval(className);
 
     % Find table row containing that animal
-
+    animalRow = findRowThatContains(scoreTable,char(currAnimal));
 
     for j = 1:length(gameObj.Players)
         currPlayer = gameObj.Players(j);
@@ -29,6 +29,8 @@ for i = 1:uint8(AnimalEnum.NumAnimals)
 
         % Calculate Score
         wildlifeScore = wildlifeScoreClass.calculateScore(currEnv);
+
+        scoreTable(animalRow,j) = {wildlifeScore};
     end
 end
 
@@ -38,19 +40,42 @@ for i = 1:length(gameObj.Players)
 
     % Calculate habitat scores
     for j = 1:uint8(TerrainEnum.NumTerrains)
-        nTiles = largestCorridorSize(currEnv, TerrainEnum(j));
+        currHabitat = TerrainEnum(j - 1);
+
+        nTiles = largestCorridorSize(currEnv, currHabitat);
+
+        habitatRow = findRowThatContains(scoreTable,...
+            ['Connected ' char(currHabitat)]);
+
+        scoreTable(habitatRow,i) = {nTiles};
     end
 
     % Nature tokens
-    currPlayer.NatureTokens;
+    natureTokenPoints = gameObj.GameParameters.PointsPerNatureToken * currPlayer.NatureTokens;
+    natureTokenRow = findRowThatContains(scoreTable,'Nature Tokens');
+    scoreTable(natureTokenRow, i) = {natureTokenPoints};
 end
 
 % Assign habitat bonuses
 if gameObj.HabitatBonus
+    % Calculate habitat scores
+    for j = 1:uint8(TerrainEnum.NumTerrains)
+        currHabitat = TerrainEnum(j - 1);
+        habitatBonusRow = findRowThatContains(scoreTable,...
+            [char(currHabitat) ' Bonus']);
 
+        % Use sort idx of habitat row perhaps. 
 
+    end
 end
 
 % Sum totals
 
+end
+
+function rowNum = findRowThatContains(table, searchChars)
+   rowNum = find(cellfun(@(x) contains(x,searchChars), table.Row), 1);
+   if isempty(rowNum)
+        error('Could not find row ''%s'' in score table!\n', searchChars);
+   end
 end

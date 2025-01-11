@@ -61,12 +61,12 @@ classdef MovesEnum < uint8
         function [gameObj, playerObj] = executeMove(gameObj, playerObj, move, moveMetadata)
             switch move
                 case MovesEnum.OverpopulationWipe
-                    [gameObj, playerObj] = MovesEnum.overpopulationWipe(gameObj, playerObj);
                     numAnimals = gameObj.countSameCenterAnimals();
                     if numAnimals ~= gameObj.GameParameters.CenterTiles
                         playerObj.UsedVoluntaryOverpopulationWipe = true;
                     end
-
+                    [gameObj, playerObj] = MovesEnum.overpopulationWipe(gameObj, playerObj);
+                    
                 case MovesEnum.SpendNatureToken
                     [gameObj, playerObj] = MovesEnum.spendNatureToken(gameObj, playerObj);
 
@@ -290,7 +290,7 @@ classdef MovesEnum < uint8
                     gameObj.StatusMsg = 'Token not compatible on this tile';
                 end
             else
-                gameObj.StatusMsg = sprintf('Tile not found at (%d, %d, %d)\n', coordinate);
+                gameObj.StatusMsg = sprintf('Invalid coordinate for token!\n');
             end
         end
 
