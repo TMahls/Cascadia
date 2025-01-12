@@ -65,8 +65,53 @@ classdef Environment
         function nTiles = largestCorridorSize(obj, terrain)
             % Calculates the size of the largest contiguous block of a
             % given terrain, in number of connected tiles.
-            nTiles = 1;
+            nTiles = 0;
+            allTiles = [obj.StarterHabitatTile, obj.HabitatTiles];
+            for i = 1:length(allTiles)
+                currTile = allTiles(i);
+                if any(currTile.Terrain == terrain)
+                    coordList = recursiveGetGroupCoords(obj, currTile, terrain, currTile.Coordinate);
+                    groupSize = size(coordList,1);
+                    if groupSize > nTiles
+                        nTiles = groupSize;
+                    end
+                end
+            end
+        end
+
+        function newCoords = recursiveGetGroupCoords(obj, tile, terrain, coordList)
+            % Returns the coordinates of a terrain group, starting from a
+            % tile. Recursively builds the coords list
+
+            % Base recursive case - list is unchanged
+            newCoords = coordList;
+
+            % Search neighbors for connected tile
+            neighborChange = int8([1,0,-1; 0,1,-1; -1,1,0]);
+            neighborChange = [neighborChange; -1.*neighborChange];
+
+            for i = 1:size(neighborChange,1)
+                % Get neighbor tile
+                neighborCoords = tile.Coordinate + neighborChange(i,:);
+                neighborTile = tileAtCoords(obj, neighborCoords);
+                
+                % If they are not currently in coords list, add and call again
+                if hasConnectedTerrain(tile, neighborTile, terrain)
+                    % Search coords list for neighbor
+                    tileInCoordList = false;
+                    for j = 1:size(coordList,1)
+                        currCoords = coordList(j,:);
+                        if all(currCoords == neighborCoords)
+                            tileInCoordList = true;
+                        end
+                    end
+
+                    if ~tileInCoordList
+                        coordList = [coordList; neighborCoords];
+                        newCoords = recursiveGetGroupCoords(obj, neighborTile, terrain, coordList);
+                    end
+                end
+            end
         end
     end
 end
-

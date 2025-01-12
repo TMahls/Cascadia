@@ -28,6 +28,48 @@ classdef HabitatTile
             %   and are not.
             tf = isscalar(obj.Terrain);
         end
+
+        function tf = hasConnectedTerrain(obj, tile2, terrain)
+            % Determines whether 2 tiles have connected terrain
+            % This is a very important function for scoring
+            tf = false;
+            % 1 - Make sure the tiles are neighbors
+            if HabitatTile.distance(obj.Coordinate, tile2.Coordinate) == 1
+                
+                % 2 - Make sure the terrain is in both tiles
+                if any(obj.Terrain == terrain) && any(tile2.Terrain == terrain)
+                    directionVec = HabitatTile.hex2cart(tile2.Coordinate - obj.Coordinate, 1);
+                                      
+                    % Find edge on each tile where tiles touch. See Tile
+                    % Orientation Convention for edge numbering
+                    directionVecAngle = mod(atan2d(-directionVec(2),directionVec(1)) + 360, 360);
+                    tile1Edge = mod(directionVecAngle/60 + 2, 6) + 1;
+                    tile2Edge = mod(tile1Edge + 2, 6) + 1;
+
+                    % 3 - Ensure the terrain is the matching terrain on
+                    % the touching edge for both tiles
+                    if (terrainOnEdge(obj, tile1Edge) == terrain) && ...
+                            (terrainOnEdge(tile2, tile2Edge) == terrain)
+                        tf = true;
+                    end
+                end
+            end
+        end
+
+        function terrain = terrainOnEdge(obj, edgeNumber)
+            % Find what terrain is on a particular edge of a tile
+            % Edge numbering convention: 1 through 6 clockwise where 1 is 
+            % top-left edge -- does not change with tile orientation.           
+            if isKeystoneTile(obj)
+                terrain = obj.Terrain;
+            else
+                if mod(edgeNumber + 6 - obj.Orientation, 6) > 3
+                    terrain = obj.Terrain(1);
+                else
+                    terrain = obj.Terrain(2);
+                end
+            end
+        end
     end
 
     methods (Static)
@@ -81,4 +123,3 @@ classdef HabitatTile
         end
     end
 end
-
