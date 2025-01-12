@@ -151,31 +151,19 @@ classdef Game
                        
                     elseif turnOver
                         % Replace Center
-                        tileIdx = randi(length(obj.HabitatTiles));
-                        randTile = obj.HabitatTiles(tileIdx);
-                        while (randTile.Status ~= StatusEnum.Hidden)
-                            tileIdx = randi(length(obj.HabitatTiles));
-                            randTile = obj.HabitatTiles(tileIdx);
-                        end
-
-                        tokenIdx = randi(length(obj.WildlifeTokens));
-                        randToken = obj.WildlifeTokens(tokenIdx);
-                        while (randToken.Status ~= StatusEnum.Hidden)
-                            tokenIdx = randi(length(obj.WildlifeTokens));
-                            randToken = obj.WildlifeTokens(tokenIdx);
-                        end
-
-                        obj.HabitatTiles(tileIdx).Status = StatusEnum.InCenter;
-                        obj.WildlifeTokens(tokenIdx).Status = StatusEnum.InCenter;
-
-                        obj.CenterTileIdx(obj.CenterTileIdx == 0) = tileIdx;
-                        obj.CenterTokenIdx(obj.CenterTokenIdx == 0) = tokenIdx;
+                        if length(obj.Players) ~= 1
+                            obj = replaceCenterNormal(obj);
+                            turnsRemaining = countTiles(obj, StatusEnum.Hidden) + 1;
+                        else
+                            obj = replaceCenterSolo(obj);
+                            turnsRemaining = (countTiles(obj, StatusEnum.Hidden) + 1)/2;
+                        end                       
 
                         % Prepare for next player's turn
                         obj.TurnCount = obj.TurnCount + 1;
                         obj.PlayerTurn = mod(obj.PlayerTurn, length(obj.Players)) + 1;
                         obj.StatusMsg = sprintf('Player %d''s Turn. %d Turns Remaining', obj.PlayerTurn, ...
-                            countTiles(obj, StatusEnum.Hidden) + 1);
+                            turnsRemaining);
                         [obj, obj.Players(obj.PlayerTurn)] = ...
                             obj.Players(obj.PlayerTurn).getAvailableActions(obj);
                     end
@@ -184,8 +172,11 @@ classdef Game
                         obj.StatusMsg = sprintf('Player %d Continues Turn', obj.PlayerTurn);
                     end
                 end
-                
-                obj.Players(originalPlayerIdx) = currPlayer;
+                % Most of the time update old player, except at end of turn
+                % in solo game.
+                if ~turnOver || originalPlayerIdx ~= obj.PlayerTurn
+                    obj.Players(originalPlayerIdx) = currPlayer;
+                end
             else
                 obj.StatusMsg = 'Action not available to player!';
             end
@@ -263,6 +254,102 @@ classdef Game
 
             % Populate Nature Tokens
             obj.NatureTokens = initNatureTokens(obj.GameParameters);
+        end
+
+        function obj = replaceCenterNormal(obj)
+            % Procedure for replacing center tile/token after turn
+
+            % 1 - Pick random hidden tile
+            tileIdx = randi(length(obj.HabitatTiles));
+            randTile = obj.HabitatTiles(tileIdx);
+            while (randTile.Status ~= StatusEnum.Hidden)
+                tileIdx = randi(length(obj.HabitatTiles));
+                randTile = obj.HabitatTiles(tileIdx);
+            end
+
+            % 2 - Pick random hidden token
+            tokenIdx = randi(length(obj.WildlifeTokens));
+            randToken = obj.WildlifeTokens(tokenIdx);
+            while (randToken.Status ~= StatusEnum.Hidden)
+                tokenIdx = randi(length(obj.WildlifeTokens));
+                randToken = obj.WildlifeTokens(tokenIdx);
+            end
+
+            % 3 - Fill empty tile/token slots with them
+            obj.HabitatTiles(tileIdx).Status = StatusEnum.InCenter;
+            obj.WildlifeTokens(tokenIdx).Status = StatusEnum.InCenter;
+
+            obj.CenterTileIdx(obj.CenterTileIdx == 0) = tileIdx;
+            obj.CenterTokenIdx(obj.CenterTokenIdx == 0) = tokenIdx;
+        end
+
+        function obj = replaceCenterSolo(obj)
+            % Procedure for replacing center in solo mode -- the furthest
+            % right tile and token are removed, and all tiles and tokens
+            % are slid to the right. 
+
+            % Remove furthest right tile / token
+            furthestTile = find(obj.CenterTileIdx, 1, 'last');
+            furthestToken = find(obj.CenterTokenIdx, 1, 'last');
+
+            furthestTileIdx = obj.CenterTileIdx(furthestTile);
+            furthestTokenIdx = obj.CenterTokenIdx(furthestToken);
+
+            obj.HabitatTiles(furthestTileIdx).Status = StatusEnum.OutOfPlay;
+            obj.WildlifeTokens(furthestTokenIdx).Status = StatusEnum.OutOfPlay;
+
+            obj.CenterTileIdx(furthestTile) = 0;
+            obj.CenterTokenIdx(furthestToken) = 0;
+
+            % Slide tiles and tokens over
+            furthestTile = find(obj.CenterTileIdx, 1, 'last');        
+            if furthestTile ~= length(obj.CenterTileIdx)
+                obj.CenterTileIdx(end) = obj.CenterTileIdx(furthestTile);
+                obj.CenterTileIdx(furthestTile) = 0;
+            end
+
+            furthestTile = find(obj.CenterTileIdx(1:end-1), 1, 'last');
+            if furthestTile ~= (length(obj.CenterTileIdx) - 1)
+                obj.CenterTileIdx(end-1) = obj.CenterTileIdx(furthestTile);
+                obj.CenterTileIdx(furthestTile) = 0;
+            end
+
+            furthestToken = find(obj.CenterTokenIdx, 1, 'last');        
+            if furthestToken ~= length(obj.CenterTokenIdx)
+                obj.CenterTokenIdx(end) = obj.CenterTokenIdx(furthestToken);
+                obj.CenterTokenIdx(furthestToken) = 0;
+            end
+
+            furthestToken = find(obj.CenterTokenIdx(1:end-1), 1, 'last');
+            if furthestToken ~= (length(obj.CenterTokenIdx) - 1)
+                obj.CenterTokenIdx(end-1) = obj.CenterTokenIdx(furthestToken);
+                obj.CenterTokenIdx(furthestToken) = 0;
+            end
+
+            % Draw new tiles / tokens
+            while any(find(~obj.CenterTileIdx))
+                tileIdx = randi(length(obj.HabitatTiles));
+                randTile = obj.HabitatTiles(tileIdx);
+                while (randTile.Status ~= StatusEnum.Hidden)
+                    tileIdx = randi(length(obj.HabitatTiles));
+                    randTile = obj.HabitatTiles(tileIdx);
+                end
+
+                obj.HabitatTiles(tileIdx).Status = StatusEnum.InCenter;
+                obj.CenterTileIdx(find(~obj.CenterTileIdx,1)) = tileIdx;
+            end
+
+            while any(find(~obj.CenterTokenIdx))
+                tokenIdx = randi(length(obj.WildlifeTokens));
+                randToken = obj.WildlifeTokens(tokenIdx);
+                while (randToken.Status ~= StatusEnum.Hidden)
+                    tokenIdx = randi(length(obj.WildlifeTokens));
+                    randToken = obj.WildlifeTokens(tokenIdx);
+                end
+
+                obj.WildlifeTokens(tokenIdx).Status = StatusEnum.InCenter;
+                obj.CenterTokenIdx(find(~obj.CenterTokenIdx,1)) = tokenIdx;
+            end
         end
     end
 end

@@ -61,6 +61,9 @@ classdef GameParameters
         end
 
         function numTiles = habitatTilesForNPlayers(~, nPlayer)
+            if nPlayer == 1
+                nPlayer = 2; % Follow 2 player setup for solo mode
+            end
             numTiles = nPlayer * 20 + 3;
         end
 
