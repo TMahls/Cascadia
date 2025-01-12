@@ -296,7 +296,7 @@ classdef MovesEnum < uint8
 
         function [gameObj, playerObj] = discardWildlifeToken(gameObj, playerObj, tokenIdx)
             playerObj.TokenPlaced = true;
-            gameObj.WildlifeTokens(tokenIdx).Status = StatusEnum.Played;
+            gameObj.WildlifeTokens(tokenIdx).Status = StatusEnum.Hidden;
             gameObj.CenterTokenIdx(gameObj.CenterTokenIdx == tokenIdx) = 0;
         end
     end

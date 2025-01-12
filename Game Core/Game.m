@@ -148,10 +148,7 @@ classdef Game
                         (countTiles(obj, StatusEnum.Hidden) == 1 && isscalar(obj.Players));
 
                     if gameOver
-                        obj = endGame(obj);
-
-                        % Print scores, announce winner
-                       
+                        obj = endGame(obj);                       
                     elseif turnOver
                         % Replace Center
                         if length(obj.Players) ~= 1
@@ -201,8 +198,8 @@ classdef Game
             for i = tokenIndexes
                 if i ~= 0 % We could have a partially empty center when we check this
                     centerTokenAnimals(idx) = obj.WildlifeTokens(i).Animal;
+                    idx = idx + 1;
                 end
-                idx = idx + 1;
             end
 
             % Count largest number of repeated animals

@@ -198,7 +198,8 @@ classdef GameParameters
         function wildlifeTokens = initWildlifeTokens(obj)
             wildlifeTokens = WildlifeToken.empty;
             idx = 1;
-            for i = 1:uint8(AnimalEnum.NumAnimals)
+            for i = 1:2
+            %for i = 1:uint8(AnimalEnum.NumAnimals)
                 for n = 1:obj.WildlifeTokensPerAnimal
                     wildlifeTokens(idx) = WildlifeToken();
                     wildlifeTokens(idx).Animal = AnimalEnum(i - 1);
