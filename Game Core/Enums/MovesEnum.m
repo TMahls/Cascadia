@@ -231,7 +231,7 @@ classdef MovesEnum < uint8
         end
 
         function habitatTile = rotateHabitatTile(habitatTile)
-            habitatTile.Orientation = habitatTile.Orientation + 1;
+            habitatTile.Orientation = mod(habitatTile.Orientation, 6) + 1;
         end
 
         function [gameObj, playerObj] = placeHabitatTile(playerObj, gameObj, tileIdx, habitatTile, coordinate)

@@ -63,7 +63,8 @@ classdef HabitatTile
             if isKeystoneTile(obj)
                 terrain = obj.Terrain;
             else
-                if mod(edgeNumber + 6 - obj.Orientation, 6) > 3
+                %if mod(edgeNumber + 6 - obj.Orientation, 6) > 3
+                if mod(obj.Orientation + 6 - edgeNumber, 6) < 3
                     terrain = obj.Terrain(1);
                 else
                     terrain = obj.Terrain(2);
