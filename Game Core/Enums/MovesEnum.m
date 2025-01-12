@@ -68,7 +68,12 @@ classdef MovesEnum < uint8
                     [gameObj, playerObj] = MovesEnum.overpopulationWipe(gameObj, playerObj);
                     
                 case MovesEnum.SpendNatureToken
-                    [gameObj, playerObj] = MovesEnum.spendNatureToken(gameObj, playerObj);
+                    if moveMetaData{1} == 2
+                        tokensToWipe = moveMetadata{2};
+                    else
+                        tokensToWipe = [];
+                    end
+                    [gameObj, playerObj] = MovesEnum.spendNatureToken(gameObj, playerObj, tokensToWipe);
 
                 case MovesEnum.SelectTile
                     tileCenterIdx = moveMetadata;
@@ -182,20 +187,46 @@ classdef MovesEnum < uint8
             playerObj.SelectedTokenIdx = 0;
         end
 
-        function [gameObj, playerObj] = spendNatureToken(gameObj, playerObj)
+        function [gameObj, playerObj] = spendNatureToken(gameObj, playerObj, tokensToWipe)
             % Option 1: Decouple habitat tile and wildlife token selection
-
-            if ~playerObj.DecoupledTileToken
-                playerObj.DecoupledTileToken = true;
-                playerObj.NatureTokens = playerObj.NatureTokens - 1;
-                tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
-                gameObj.NatureTokens(tokenIdx) = 0;
+            if isempty(tokensToWipe)
+                if ~playerObj.DecoupledTileToken
+                    playerObj.DecoupledTileToken = true;
+                    playerObj.NatureTokens = playerObj.NatureTokens - 1;
+                    tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
+                    gameObj.NatureTokens(tokenIdx) = 0;
+                else
+                    gameObj.StatusMsg = 'Nature token already spent for this purpose!';
+                end
             else
-                gameObj.StatusMsg = 'Nature token already spent for this purpose!';
+                % Option 2: Wipe selected wildlife tokens (player must select)
+                % Set tokens aside
+                wipedTokenIdx = zeros(size(tokensToWipe));
+                for i = 1:length(tokensToWipe)
+                    wipedTokenIdx(i) = gameObj.CenterTokenIdx(tokensToWipe(i));
+                    gameObj.WildlifeTokens(wipedTokenIdx(i)).Status = StatusEnum.OutOfPlay;
+                    gameObj.CenterTokenIdx(i) = 0;
+                end
+
+                % Draw replacement tokens
+                for i = 1:length(tokensToWipe)
+                    nextCenterIdx = find(gameObj.CenterTokenIdx == 0, 1);
+                    randIdx = randi(length(gameObj.WildlifeTokens));
+                    newToken = gameObj.WildlifeTokens(randIdx);
+                    while newToken.Status ~= StatusEnum.Hidden
+                        randIdx = randi(length(gameObj.WildlifeTokens));
+                        newToken = gameObj.WildlifeTokens(randIdx);
+                    end
+                    newToken.Status = StatusEnum.InCenter;
+                    gameObj.WildlifeTokens(randIdx) = newToken;
+                    gameObj.CenterTokenIdx(nextCenterIdx) = randIdx;
+                end
+
+                % Place wiped tokens back in bag
+                for i = wipedTokenIdx
+                    gameObj.WildlifeTokens(i).Status = StatusEnum.Hidden;
+                end
             end
-
-            % Option 2: Wipe any wildlife tokens (player must select, do this later.)
-
         end
 
         function playerObj = selectHabitatTile(playerObj, gameObj, tileCenterIdx)
