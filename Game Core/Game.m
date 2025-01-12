@@ -142,7 +142,10 @@ classdef Game
                     obj.Players(originalPlayerIdx) = currPlayer;
                     obj.CurrentScores = calculateAllScores(obj);
 
-                    gameOver = (countTiles(obj, StatusEnum.Hidden) == 0);
+                    % Game is over if there are no hidden tiles left, or in
+                    % solo game if there is only 1 hidden tile left. 
+                    gameOver = (countTiles(obj, StatusEnum.Hidden) == 0) ||...
+                        (countTiles(obj, StatusEnum.Hidden) == 1 && isscalar(obj.Players));
 
                     if gameOver
                         obj = endGame(obj);

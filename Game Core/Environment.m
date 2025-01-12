@@ -108,7 +108,10 @@ classdef Environment
 
                     if ~tileInCoordList
                         coordList = [coordList; neighborCoords];
-                        newCoords = recursiveGetGroupCoords(obj, neighborTile, terrain, coordList);
+                        coordList = recursiveGetGroupCoords(obj, neighborTile, terrain, coordList);
+                        % Add unique vals to newCoords - don't overwrite
+                        locInA = ~ismember(coordList,newCoords,"rows");
+                        newCoords = [newCoords; coordList(locInA,:)];
                     end
                 end
             end
