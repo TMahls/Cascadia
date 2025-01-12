@@ -94,25 +94,16 @@ classdef Environment
                 % Get neighbor tile
                 neighborCoords = tile.Coordinate + neighborChange(i,:);
                 neighborTile = tileAtCoords(obj, neighborCoords);
-                
-                % If they are not currently in coords list, add and call again
-                if hasConnectedTerrain(tile, neighborTile, terrain)
-                    % Search coords list for neighbor
-                    tileInCoordList = false;
-                    for j = 1:size(coordList,1)
-                        currCoords = coordList(j,:);
-                        if all(currCoords == neighborCoords)
-                            tileInCoordList = true;
-                        end
-                    end
 
-                    if ~tileInCoordList
-                        coordList = [coordList; neighborCoords];
-                        coordList = recursiveGetGroupCoords(obj, neighborTile, terrain, coordList);
-                        % Add unique vals to newCoords - don't overwrite
-                        locInA = ~ismember(coordList,newCoords,"rows");
-                        newCoords = [newCoords; coordList(locInA,:)];
-                    end
+                % If they are not currently in coords list, add and call again
+                tileInCoordList = ismember(neighborCoords,coordList,"rows");
+
+                if ~tileInCoordList && hasConnectedTerrain(tile, neighborTile, terrain)
+                    coordList = [coordList; neighborCoords];
+                    coordList = recursiveGetGroupCoords(obj, neighborTile, terrain, coordList);
+                    % Add unique vals to newCoords - don't overwrite
+                    locInA = ~ismember(coordList,newCoords,"rows");
+                    newCoords = [newCoords; coordList(locInA,:)];
                 end
             end
         end
