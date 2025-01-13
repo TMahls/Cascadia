@@ -130,7 +130,7 @@ classdef Environment
                 if ~isempty(neighborTile.WildlifeToken.Animal) && ...
                         (neighborTile.WildlifeToken.Animal == animal) && ~tileInCoordList
                     coordList = [coordList; neighborCoords];
-                    coordList = recursiveGetTerrainGroupCoords(obj, neighborTile, animal, coordList);
+                    coordList = recursiveGetAnimalGroupCoords(obj, neighborTile, animal, coordList);
                     % Add unique vals to newCoords - don't overwrite
                     locInA = ~ismember(coordList,newCoords,"rows");
                     newCoords = [newCoords; coordList(locInA,:)];
