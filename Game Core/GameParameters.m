@@ -236,7 +236,7 @@ classdef GameParameters
             scoreTypes{i + 1} = 'Wildlife Total';
             idx = i + 2;
             for i = 1:uint8(TerrainEnum.NumTerrains)
-                scoreTypes{idx} = ['Connected ' char(TerrainEnum(i - 1)) 's'];
+                scoreTypes{idx} = ['Largest ' char(TerrainEnum(i - 1))];
                 scoreTypes{idx + 1} = [char(TerrainEnum(i - 1)) ' Bonus'];
                 idx = idx + 2;
             end

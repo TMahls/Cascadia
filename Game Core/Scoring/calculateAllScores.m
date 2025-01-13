@@ -51,7 +51,7 @@ for i = 1:length(gameObj.Players)
         nTiles = largestCorridorSize(currEnv, currHabitat);
 
         habitatRow = findRowThatContains(scoreTable,...
-            ['Connected ' char(currHabitat)]);
+            ['Largest ' char(currHabitat)]);
 
         scoreTable(habitatRow,i) = {nTiles};
     end
@@ -70,7 +70,7 @@ if gameObj.HabitatBonus
             [char(currHabitat) ' Bonus']);
 
         habitatRow = findRowThatContains(scoreTable,...
-            ['Connected ' char(currHabitat)]);
+            ['Largest ' char(currHabitat)]);
 
         scoreTable(habitatBonusRow,:) = calculateBonuses(scoreTable(habitatRow,:));
     end
@@ -84,7 +84,7 @@ habitatTotalRow = findRowThatContains(scoreTable, 'Habitat Total');
 scoreTable(habitatTotalRow,:) = sum(scoreTable((wildlifeTotalRow-1):(habitatTotalRow-1),:),1);
 
 % Assume grand total row is at the end
-scoreTable(end,:) = sum(scoreTable([wildlifeTotalRow, habitatTotalRow, natureTokenRow],:),1);
+scoreTable(end,:) = sum(scoreTable([wildlifeTotalRow, habitatTotalRow, natureTokenRow],:),1)
 end
 
 function rowNum = findRowThatContains(table, searchChars)

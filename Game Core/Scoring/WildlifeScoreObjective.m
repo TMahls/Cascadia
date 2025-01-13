@@ -22,17 +22,22 @@ classdef WildlifeScoreObjective
         function groupSize = calculateGroupSizes(~, env, animal)
             % List of group sizes for a particular animal and environment
             
-            allTiles = [obj.StarterHabitatTile, obj.HabitatTiles];
-            coordList = []; groupSize = [];
+            allTiles = [env.StarterHabitatTile, env.HabitatTiles];
+            overallCoordList = []; groupSize = [];
             for i = 1:length(allTiles)
                 currTile = allTiles(i);
 
-                tileNotInList = ~ismember(currTile.Coordinate,coordList,"rows");
+                if ~isempty(overallCoordList)
+                    tileNotInList = ~ismember(currTile.Coordinate,overallCoordList,"rows");
+                else
+                    tileNotInList = true;
+                end
                
-                if currTile.WildlifeToken.Animal == animal && tileNotInList
-                    coordList = [coordList;
-                        recursiveGetAnimalGroupCoords(env, currTile, terrain, currTile.Coordinate)];
-                    groupSize = [groupSize, size(coordList,1)];
+                if ~isempty(currTile.WildlifeToken.Animal) && ...
+                        (currTile.WildlifeToken.Animal == animal) && tileNotInList
+                    groupCoordList = recursiveGetAnimalGroupCoords(env, currTile, animal, currTile.Coordinate);
+                    overallCoordList = [overallCoordList; groupCoordList];
+                    groupSize = [groupSize, size(groupCoordList,1)];
                 end
             end
         end

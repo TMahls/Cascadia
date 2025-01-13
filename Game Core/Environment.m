@@ -127,7 +127,8 @@ classdef Environment
                 % If they are not currently in coords list, add and call again
                 tileInCoordList = ismember(neighborCoords,coordList,"rows");
 
-                if ~tileInCoordList && (neighborTile.WildlifeToken.Animal == animal)
+                if ~isempty(neighborTile.WildlifeToken.Animal) && ...
+                        (neighborTile.WildlifeToken.Animal == animal) && ~tileInCoordList
                     coordList = [coordList; neighborCoords];
                     coordList = recursiveGetTerrainGroupCoords(obj, neighborTile, animal, coordList);
                     % Add unique vals to newCoords - don't overwrite
