@@ -88,7 +88,7 @@ scoreTable(end,:) = sum(scoreTable([wildlifeTotalRow, habitatTotalRow, natureTok
 end
 
 function rowNum = findRowThatContains(table, searchChars)
-rowNum = find(cellfun(@(x) contains(x,searchChars), table.Row), 1);
+rowNum = find(contains(table.Row, searchChars), 1);
 if isempty(rowNum)
     error('Could not find row ''%s'' in score table!\n', searchChars);
 end
