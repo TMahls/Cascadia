@@ -9,6 +9,10 @@ classdef ElkRule < WildlifeScoreObjective
 
         end
 
+        function elkGroupSizes = calculateElkGroupSizes(obj, env)
+            elkGroupSizes = calculateGroupSizes(obj, env, AnimalEnum.Elk);
+        end
+
     end
 end
 

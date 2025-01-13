@@ -10,7 +10,9 @@ classdef BearRuleD < BearRule
         end
 
         function score = calculateScore(obj, environment)
-            score = 0;
+            bearGroupSizes = calculateBearGroupSizes(obj, environment);
+            score = 5 * nnz(bearGroupSizes == 2) + 8 * nnz(bearGroupSizes == 3) + ...
+                13 * nnz(bearGroupSizes == 4);
         end
     end
 end

@@ -70,7 +70,7 @@ classdef Environment
             for i = 1:length(allTiles)
                 currTile = allTiles(i);
                 if any(currTile.Terrain == terrain)
-                    coordList = recursiveGetGroupCoords(obj, currTile, terrain, currTile.Coordinate);
+                    coordList = recursiveGetTerrainGroupCoords(obj, currTile, terrain, currTile.Coordinate);
                     groupSize = size(coordList,1);
                     if groupSize > nTiles
                         nTiles = groupSize;
@@ -79,7 +79,7 @@ classdef Environment
             end
         end
 
-        function newCoords = recursiveGetGroupCoords(obj, tile, terrain, coordList)
+        function newCoords = recursiveGetTerrainGroupCoords(obj, tile, terrain, coordList)
             % Returns the coordinates of a terrain group, starting from a
             % tile. Recursively builds the coords list
 
@@ -100,7 +100,36 @@ classdef Environment
 
                 if ~tileInCoordList && hasConnectedTerrain(tile, neighborTile, terrain)
                     coordList = [coordList; neighborCoords];
-                    coordList = recursiveGetGroupCoords(obj, neighborTile, terrain, coordList);
+                    coordList = recursiveGetTerrainGroupCoords(obj, neighborTile, terrain, coordList);
+                    % Add unique vals to newCoords - don't overwrite
+                    locInA = ~ismember(coordList,newCoords,"rows");
+                    newCoords = [newCoords; coordList(locInA,:)];
+                end
+            end
+        end
+
+        function newCoords = recursiveGetAnimalGroupCoords(obj, tile, animal, coordList)
+            % Very similar to the above, but simpler in that we don't have
+            % to worry about rotation.
+
+            % Base recursive case - list is unchanged
+            newCoords = coordList;
+
+            % Search neighbors for connected tile
+            neighborChange = int8([1,0,-1; 0,1,-1; -1,1,0]);
+            neighborChange = [neighborChange; -1.*neighborChange];
+
+            for i = 1:size(neighborChange,1)
+                % Get neighbor tile
+                neighborCoords = tile.Coordinate + neighborChange(i,:);
+                neighborTile = tileAtCoords(obj, neighborCoords);
+
+                % If they are not currently in coords list, add and call again
+                tileInCoordList = ismember(neighborCoords,coordList,"rows");
+
+                if ~tileInCoordList && (neighborTile.WildlifeToken.Animal == animal)
+                    coordList = [coordList; neighborCoords];
+                    coordList = recursiveGetTerrainGroupCoords(obj, neighborTile, animal, coordList);
                     % Add unique vals to newCoords - don't overwrite
                     locInA = ~ismember(coordList,newCoords,"rows");
                     newCoords = [newCoords; coordList(locInA,:)];
