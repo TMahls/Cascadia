@@ -28,7 +28,12 @@ for i = 1:uint8(AnimalEnum.NumAnimals)
         currEnv = currPlayer.Environment;
 
         % Calculate Score
-        wildlifeScore = wildlifeScoreClass.calculateScore(currEnv);
+        if (gameObj.GameMode ~= GameModeEnum.FamilyVariant) && ...
+                (gameObj.GameMode ~= GameModeEnum.IntermediateVariant)
+            wildlifeScore = wildlifeScoreClass.calculateScore(currEnv);
+        else
+            wildlifeScore = wildlifeScoreClass.calculateScore(currEnv, currAnimal);
+        end
 
         scoreTable(animalRow,j) = {wildlifeScore};
     end

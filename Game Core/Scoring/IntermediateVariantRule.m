@@ -9,7 +9,7 @@ classdef IntermediateVariantRule < WildlifeScoreObjective
 
         end 
 
-        function score = calculateScore(obj, environment)
+        function score = calculateScore(obj, environment, animal)
             score = 0;
         end
     end
