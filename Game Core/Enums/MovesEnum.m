@@ -68,7 +68,7 @@ classdef MovesEnum < uint8
                     [gameObj, playerObj] = MovesEnum.overpopulationWipe(gameObj, playerObj);
                     
                 case MovesEnum.SpendNatureToken
-                    if moveMetaData{1} == 2
+                    if moveMetadata{1} == 2
                         tokensToWipe = moveMetadata{2};
                     else
                         tokensToWipe = [];
@@ -185,16 +185,14 @@ classdef MovesEnum < uint8
             % Reset player selections
             playerObj.SelectedTileIdx = 0;
             playerObj.SelectedTokenIdx = 0;
+            playerObj.Environment.PreviewTile = HabitatTile();
         end
 
         function [gameObj, playerObj] = spendNatureToken(gameObj, playerObj, tokensToWipe)
             % Option 1: Decouple habitat tile and wildlife token selection
             if isempty(tokensToWipe)
                 if ~playerObj.DecoupledTileToken
-                    playerObj.DecoupledTileToken = true;
-                    playerObj.NatureTokens = playerObj.NatureTokens - 1;
-                    tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
-                    gameObj.NatureTokens(tokenIdx) = 0;
+                    playerObj.DecoupledTileToken = true;               
                 else
                     gameObj.StatusMsg = 'Nature token already spent for this purpose!';
                 end
@@ -227,6 +225,16 @@ classdef MovesEnum < uint8
                     gameObj.WildlifeTokens(i).Status = StatusEnum.Hidden;
                 end
             end
+
+            % Reset player selections
+            playerObj.SelectedTileIdx = 0;
+            playerObj.SelectedTokenIdx = 0;
+            playerObj.Environment.PreviewTile = HabitatTile();
+
+            % Spend nature token
+            playerObj.NatureTokens = playerObj.NatureTokens - 1;
+            tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
+            gameObj.NatureTokens(tokenIdx) = 0;
         end
 
         function playerObj = selectHabitatTile(playerObj, gameObj, tileCenterIdx)
