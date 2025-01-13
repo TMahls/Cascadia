@@ -19,6 +19,7 @@ classdef Game
         StatusMsg char % Current game status
 
         GameComplete (1,1) logical % True when game is over
+        GameMode (1,1) GameModeEnum % Which game mode we're using
         CurrentScores table % Scores for current turn
         ScoringRules uint8 % Which scoring rule we're using
         HabitatBonus (1,1) logical % Whether we assign largest habitat bonuses
@@ -52,6 +53,7 @@ classdef Game
             end
 
             % Set scoring rules
+            obj.GameMode = options.GameMode;
             obj.ScoringRules = obj.GameParameters.initScoringRules(...
                 options.GameMode, options.CustomRules);
             obj.HabitatBonus = options.HabitatBonus;
