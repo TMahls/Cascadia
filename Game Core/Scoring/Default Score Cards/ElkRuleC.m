@@ -14,8 +14,12 @@ classdef ElkRuleC < ElkRule
             
             score = 0;
             pointAmounts = [2,4,7,10,14,18,23,28];
-            for groupSize = 2:8
-                score = score + pointAmounts(groupSize - 1) * nnz(elkGroupSizes == groupSize);
+            for groupSize = 1:8
+                if groupSize ~= 8
+                    score = score + pointAmounts(groupSize) * nnz(elkGroupSizes == groupSize);
+                else
+                    score = score + pointAmounts(groupSize) * nnz(elkGroupSizes >= groupSize);
+                end
             end
         end
     end
