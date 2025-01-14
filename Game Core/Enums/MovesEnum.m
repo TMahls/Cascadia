@@ -66,7 +66,7 @@ classdef MovesEnum < uint8
                         playerObj.UsedVoluntaryOverpopulationWipe = true;
                     end
                     [gameObj, playerObj] = MovesEnum.overpopulationWipe(gameObj, playerObj);
-                    
+
                 case MovesEnum.SpendNatureToken
                     if moveMetadata{1} == 2
                         tokensToWipe = moveMetadata{2};
@@ -192,7 +192,12 @@ classdef MovesEnum < uint8
             % Option 1: Decouple habitat tile and wildlife token selection
             if isempty(tokensToWipe)
                 if ~playerObj.DecoupledTileToken
-                    playerObj.DecoupledTileToken = true;               
+                    playerObj.DecoupledTileToken = true;
+
+                    % Spend nature token
+                    playerObj.NatureTokens = playerObj.NatureTokens - 1;
+                    tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
+                    gameObj.NatureTokens(tokenIdx) = 0;
                 else
                     gameObj.StatusMsg = 'Nature token already spent for this purpose!';
                 end
@@ -224,6 +229,11 @@ classdef MovesEnum < uint8
                 for i = wipedTokenIdx
                     gameObj.WildlifeTokens(i).Status = StatusEnum.Hidden;
                 end
+
+                % Spend nature token
+                playerObj.NatureTokens = playerObj.NatureTokens - 1;
+                tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
+                gameObj.NatureTokens(tokenIdx) = 0;
             end
 
             % Reset player selections
@@ -231,10 +241,6 @@ classdef MovesEnum < uint8
             playerObj.SelectedTokenIdx = 0;
             playerObj.Environment.PreviewTile = HabitatTile();
 
-            % Spend nature token
-            playerObj.NatureTokens = playerObj.NatureTokens - 1;
-            tokenIdx = find(gameObj.NatureTokens == gameObj.PlayerTurn, 1);
-            gameObj.NatureTokens(tokenIdx) = 0;
         end
 
         function playerObj = selectHabitatTile(playerObj, gameObj, tileCenterIdx)
