@@ -101,7 +101,7 @@ classdef GameParameters
             end
         end
 
-        function className = getScoringClassName(~, animal, scoringRuleNumber)
+        function [className, methodName] = getScoringClassName(~, animal, scoringRuleNumber)
             className = '';
             if isa(scoringRuleNumber,'GameModeEnum')
                 if scoringRuleNumber == GameModeEnum.FamilyVariant
@@ -109,9 +109,11 @@ classdef GameParameters
                 elseif scoringRuleNumber == GameModeEnum.IntermediateVariant
                     className = 'IntermediateVariantRule';
                 end
+                methodName = 'calculateScore';
             else
-            scoringRuleLetter = char(scoringRuleNumber + 64);
-            className = [char(animal) 'Rule' scoringRuleLetter];
+                scoringRuleLetter = char(scoringRuleNumber + 64);
+                className = [char(animal) 'Rules'];
+                methodName = ['rule' scoringRuleLetter 'Score'];
             end
         end
 

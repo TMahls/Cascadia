@@ -14,7 +14,7 @@ for i = 1:uint8(AnimalEnum.NumAnimals)
     else % Family or intermediate variant
         scoreNum = gameObj.ScoringRules;
     end
-    className = gameObj.GameParameters.getScoringClassName(currAnimal, scoreNum);
+    [className, methodName] = gameObj.GameParameters.getScoringClassName(currAnimal, scoreNum);
 
     % We do this outside of the player loop to be efficient with our score
     % rule class creation-- reuse same class for all players.
@@ -28,11 +28,11 @@ for i = 1:uint8(AnimalEnum.NumAnimals)
         currEnv = currPlayer.Environment;
 
         % Calculate Score
-        if (gameObj.GameMode ~= GameModeEnum.FamilyVariant) && ...
-                (gameObj.GameMode ~= GameModeEnum.IntermediateVariant)
-            wildlifeScore = wildlifeScoreClass.calculateScore(currEnv);
+        if (gameObj.GameMode == GameModeEnum.FamilyVariant || ...
+                gameObj.GameMode == GameModeEnum.IntermediateVariant)
+            wildlifeScore = feval(methodName, wildlifeScoreClass, currEnv, currAnimal);
         else
-            wildlifeScore = wildlifeScoreClass.calculateScore(currEnv, currAnimal);
+            wildlifeScore = feval(methodName, wildlifeScoreClass, currEnv);
         end
 
         scoreTable(animalRow,j) = {wildlifeScore};

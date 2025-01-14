@@ -9,15 +9,10 @@ classdef WildlifeScoreObjective
         function obj = WildlifeScoreObjective()
             %ANIMALSCORERULE Construct an instance of this class
             %   Detailed explanation goes here
-        end
-     
+        end     
     end
 
-    methods (Abstract)
-        score = calculateScore(obj,environment)          
-    end
-
-    methods (Access = protected) % Implemented subclass methods
+    methods (Access = protected) % Common utility functions
         
         function groupSize = calculateGroupSizes(~, env, animal)
             % List of group sizes for a particular animal and environment
