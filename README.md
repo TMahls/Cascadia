@@ -116,8 +116,10 @@ not private or protected. Absolutley no attention was paid to security
 when I was writing this. You could very easily cheat by accessing these
 internal functions, please adhere to the honor system! 
 
+[TODO]
+
 ``` 
-# Start game
+% Start game
 obj = Game;
 nPlayers = 3;
 obj = obj.startNewGame(nPlayers);
