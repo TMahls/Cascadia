@@ -79,8 +79,22 @@ classdef WildlifeScoreObjective
                 % Get neighbor tile
                 neighborCoords = tile.Coordinate + neighborChange(j,:);
                 neighborTile = tileAtCoords(environment, neighborCoords);
-                if ~isempty(neighborTile.Animal)
-                    animalsFound(neighborTile.Animal + 1) = 1;
+                if ~isempty(neighborTile.WildlifeToken.Animal)
+                    animalsFound(neighborTile.WildlifeToken.Animal + 1) = 1;
+                end
+            end
+        end
+
+        function animalTiles = getAllAnimalTiles(~, env, animal)
+            % Return list of all tiles in an environment with a certain
+            % animal
+            allTiles = [env.StarterHabitatTile, env.HabitatTiles];
+            animalTiles = [];
+            for i = 1:length(allTiles)
+                currTile = allTiles(i);
+                if ~isempty(currTile.WildlifeToken.Animal) && ...
+                        (currTile.WildlifeToken.Animal == animal)
+                    animalTiles = [animalTiles; currTile];
                 end
             end
         end
