@@ -8,7 +8,7 @@ at least back to 2020.
 
  1. [Getting Started](#getting-started) 
  2. [Folder Structure](#folder-structure)
- 3. [Re-building Standalone Application](#rebuilding-app)
+ 3. [Re-building Standalone Application](#re-building-app)
  3. [API Documentation](#api-documentation)
 
 
@@ -66,6 +66,12 @@ but it definitely came in handy:
 % Calculate wildlife scores
 for i = 1:uint8(AnimalEnum.NumAnimals)
     currAnimal = AnimalEnum(i - 1); 
+```
+
+MovesEnum is the big one, where I made all the possible moves a static method:
+```
+% Perform 'Discard Token' move
+app.CascadiaGame = playerAction(app.CascadiaGame, MovesEnum.DiscardToken, tokenIdx);
 ```
 
 #### Scoring
