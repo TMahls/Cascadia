@@ -9,11 +9,32 @@ classdef WildlifeScoreObjective
         function obj = WildlifeScoreObjective()
             %ANIMALSCORERULE Construct an instance of this class
             %   Detailed explanation goes here
-        end     
+        end 
+
+        % By default we populate the score rules as 'points for groups'
+        % meaning we assign some number of points to a each group based on
+        % its properties. These methods can be overriden for different
+        % scenarios. 
+
+        function score = ruleAScore(obj, environment)
+            score = pointsForGroups(obj, environment, obj.Animal, 'ruleAShape');
+        end
+
+        function score = ruleBScore(obj, environment)
+            score = pointsForGroups(obj, environment, obj.Animal, 'ruleBShape');
+        end
+
+        function score = ruleCScore(obj, environment)
+            score = pointsForGroups(obj, environment, obj.Animal, 'ruleCShape');
+        end
+
+        function score = ruleDScore(obj, environment)
+            score = pointsForGroups(obj, environment, obj.Animal, 'ruleDShape');
+        end
     end
 
     methods (Access = protected) % Common utility functions
-        
+   
         function groupSize = calculateGroupSizes(~, env, animal)
             % List of group sizes for a particular animal and environment
             

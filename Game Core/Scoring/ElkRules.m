@@ -9,10 +9,6 @@ classdef ElkRules < WildlifeScoreObjective
             obj.Animal = AnimalEnum.Elk;
         end
 
-        function elkGroupSizes = calculateElkGroupSizes(obj, env)
-            elkGroupSizes = calculateGroupSizes(obj, env, obj.Animal);
-        end
-
         function score = ruleAScore(obj, environment)
             score = 0;
         end
@@ -21,22 +17,17 @@ classdef ElkRules < WildlifeScoreObjective
             score = 0;
         end
 
-        function score = ruleCScore(obj, environment)
-            elkGroupSizes = calculateElkGroupSizes(obj, environment);
-            
-            score = 0;
-            pointAmounts = [2,4,7,10,14,18,23,28];
-            for groupSize = 1:8
-                if groupSize ~= 8
-                    score = score + pointAmounts(groupSize) * nnz(elkGroupSizes == groupSize);
-                else
-                    score = score + pointAmounts(groupSize) * nnz(elkGroupSizes >= groupSize);
-                end
-            end
-        end
-
         function score = ruleDScore(obj, environment)
 
+        end
+
+        function groupScore = ruleCShape(obj, environment, groupCoords)
+            scoreTable = [2 4 7 10 14 18 23 28];
+            if size(groupCoords,1) <= length(scoreTable)
+                groupScore = scoreTable(size(groupCoords,1));      
+            else
+                groupScore = scoreTable(end);
+            end
         end
 
     end

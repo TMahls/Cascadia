@@ -9,23 +9,7 @@ classdef FoxRules < WildlifeScoreObjective
             obj.Animal = AnimalEnum.Fox;
         end
 
-        function score = ruleAScore(obj, environment)
-            score = pointsForGroups(obj, environment, obj.Animal, 'foxAShape');
-        end
-
-        function score = ruleBScore(obj, environment)
-            score = pointsForGroups(obj, environment, obj.Animal, 'foxBShape');
-        end
-
-        function score = ruleCScore(obj, environment)
-            score = pointsForGroups(obj, environment, obj.Animal, 'foxCShape');
-        end
-
-        function score = ruleDScore(obj, environment)
-            score = pointsForGroups(obj, environment, obj.Animal, 'foxDShape');
-        end
-
-        function groupScore = foxAShape(obj, environment, groupCoords)
+        function groupScore = ruleAShape(obj, environment, groupCoords)
             groupScore = 0;
             for i = 1:size(groupCoords,1) % For each fox in the group
                 tile = tileAtCoords(environment, groupCoords(i,:));
@@ -36,7 +20,7 @@ classdef FoxRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = foxBShape(obj, environment, groupCoords)
+        function groupScore = ruleBShape(obj, environment, groupCoords)
             groupScore = 0;
             for i = 1:size(groupCoords,1) % For each fox in the group
                 tile = tileAtCoords(environment, groupCoords(i,:));
@@ -54,7 +38,7 @@ classdef FoxRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = foxCShape(obj, environment, groupCoords)
+        function groupScore = ruleCShape(obj, environment, groupCoords)
             groupScore = 0;
             for i = 1:size(groupCoords,1) % For each fox in the group
                 tile = tileAtCoords(environment, groupCoords(i,:));
@@ -67,7 +51,7 @@ classdef FoxRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = foxDShape(obj, environment, groupCoords)
+        function groupScore = ruleDShape(obj, environment, groupCoords)
             % This one has complicated edge-cases. Luckily, it's been
             % answered by Randy! https://boardgamegeek.com/thread/2817617/fox-card-d-rule-clarification
             groupScore = 0;

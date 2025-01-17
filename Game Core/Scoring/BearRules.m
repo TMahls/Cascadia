@@ -1,22 +1,18 @@
 classdef BearRules < WildlifeScoreObjective
-    
+
     properties
-        
+
     end
-    
+
     methods
         function obj = BearRules()
             obj.Animal = AnimalEnum.Bear;
         end
 
-        function bearGroupSizes = calculateBearGroupSizes(obj, env)
-            bearGroupSizes = calculateGroupSizes(obj, env, obj.Animal);
-        end
-
         function score = ruleAScore(obj, environment)
             bearGroupSizes = calculateBearGroupSizes(obj, environment);
             bearPairs = nnz(bearGroupSizes == 2);
-            
+
             score = 0;
             if bearPairs == 1
                 score = 4;
@@ -29,10 +25,11 @@ classdef BearRules < WildlifeScoreObjective
             end
         end
 
-        function score = ruleBScore(obj, environment)
-            bearGroupSizes = calculateBearGroupSizes(obj, environment);
-            bearTrios = nnz(bearGroupSizes == 3);           
-            score = 10 * bearTrios;
+        function groupScore = ruleBShape(obj, environment, groupCoords)
+            groupScore = 0;
+            if size(groupCoords,1) == 3
+                groupScore = 10;
+            end
         end
 
         function score = ruleCScore(obj, environment)
@@ -45,10 +42,23 @@ classdef BearRules < WildlifeScoreObjective
             end
         end
 
-        function score = ruleDScore(obj, environment)
-            bearGroupSizes = calculateBearGroupSizes(obj, environment);
-            score = 5 * nnz(bearGroupSizes == 2) + 8 * nnz(bearGroupSizes == 3) + ...
-                13 * nnz(bearGroupSizes == 4);
+        function groupScore = ruleDShape(obj, environment, groupCoords)
+            groupScore = 0;
+            switch size(groupCoords,1)
+                case 2
+                    groupScore = 5;
+                case 3
+                    groupScore = 8;
+                case 4
+                    groupScore = 13;
+            end
         end
     end
+
+    methods (Access = private)
+        function bearGroupSizes = calculateBearGroupSizes(obj, env)
+            bearGroupSizes = calculateGroupSizes(obj, env, obj.Animal);
+        end
+    end
+
 end

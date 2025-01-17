@@ -7,26 +7,9 @@ classdef SalmonRules < WildlifeScoreObjective
     methods
         function obj = SalmonRules()
             obj.Animal = AnimalEnum.Salmon;
-        end
-
-        function score = ruleAScore(obj, environment)
-            score = pointsForGroups(obj, environment, obj.Animal, 'salmonAShape');
-        end
-
-        function score = ruleBScore(obj, environment)
-            score = pointsForGroups(obj, environment, obj.Animal, 'salmonBShape');
-        end
-
-        function score = ruleCScore(obj, environment)
-            score = pointsForGroups(obj, environment, obj.Animal, 'salmonCShape');
-        end
-
-        function score = ruleDScore(obj, environment)
-            score = pointsForGroups(obj, environment, obj.Animal, 'salmonDShape');
-        end
+        end    
         
-
-        function groupScore = salmonAShape(obj, environment, groupCoords)
+        function groupScore = ruleAShape(obj, environment, groupCoords)
             groupScore = 0;
             scoreTable = [2 5 8 12 16 20 25];
             if isRun(obj, environment, groupCoords)
@@ -39,7 +22,7 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonBShape(obj, ~, groupCoords)
+        function groupScore = ruleBShape(obj, ~, groupCoords)
             groupScore = 0;
             scoreTable = [2 4 9 11 17];
             if isRun(obj, environment, groupCoords)
@@ -52,7 +35,7 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonCShape(obj, ~, groupCoords)
+        function groupScore = ruleCShape(obj, ~, groupCoords)
             groupScore = 0;
             scoreTable = [0 0 10 12 15];
             if isRun(obj, environment, groupCoords)
@@ -65,7 +48,7 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonDShape(obj, environment, groupCoords)
+        function groupScore = ruleDShape(obj, environment, groupCoords)
             groupScore = 0;
             if isRun(obj, environment, groupCoords)
                 runLength = size(groupCoords,1);
