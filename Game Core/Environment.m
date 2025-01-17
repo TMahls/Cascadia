@@ -62,6 +62,24 @@ classdef Environment
             end
         end
 
+        function neighborTiles = getNeighborTiles(obj, tileCoords)
+            % Returns list of 6 neighbor tiles. If tile does not exist, an
+            % empty tile will be returned.
+
+            neighborTiles = HabitatTile.empty;
+
+            neighborChange = int8([1,0,-1; 0,1,-1; -1,1,0]);
+            neighborChange = [neighborChange; -1.*neighborChange];
+
+
+            for i = 1:size(neighborChange,1)
+                % Get neighbor tile
+                neighborCoords = tileCoords + neighborChange(i,:);
+                neighborTiles(i) = tileAtCoords(obj, neighborCoords);
+            end
+
+        end
+
         function nTiles = largestCorridorSize(obj, terrain)
             % Calculates the size of the largest contiguous block of a
             % given terrain, in number of connected tiles.
@@ -87,13 +105,11 @@ classdef Environment
             newCoords = coordList;
 
             % Search neighbors for connected tile
-            neighborChange = int8([1,0,-1; 0,1,-1; -1,1,0]);
-            neighborChange = [neighborChange; -1.*neighborChange];
+            neighborTiles = getNeighborTiles(obj, tile.Coordinate);
 
-            for i = 1:size(neighborChange,1)
+            for i = 1:length(neighborTiles)
                 % Get neighbor tile
-                neighborCoords = tile.Coordinate + neighborChange(i,:);
-                neighborTile = tileAtCoords(obj, neighborCoords);
+                neighborTile = neighborTiles(i);
 
                 % If they are not currently in coords list, add and call again
                 tileInCoordList = ismember(neighborCoords,coordList,"rows");

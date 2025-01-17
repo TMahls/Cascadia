@@ -69,16 +69,13 @@ classdef WildlifeScoreObjective
             % Gets list of animals adjacent to a tile. Uses AnimalEnum + 1
             % as index. Ex: numBears = animalList(AnimalEnum.Bear + 1);
 
-            neighborChange = int8([1,0,-1; 0,1,-1; -1,1,0]);
-            neighborChange = [neighborChange; -1.*neighborChange];
+            neighborTiles = getNeighborTiles(environment, tile.Coordinate);
 
             % Array of whether we have found a particular animal
             animalsFound = zeros(1, AnimalEnum.NumAnimals);
 
-            for j = 1:size(neighborChange,1)
-                % Get neighbor tile
-                neighborCoords = tile.Coordinate + neighborChange(j,:);
-                neighborTile = tileAtCoords(environment, neighborCoords);
+            for i = 1:length(neighborTiles)
+                neighborTile = neighborTiles(i);
                 if ~isempty(neighborTile.WildlifeToken.Animal)
                     animalsFound(neighborTile.WildlifeToken.Animal + 1) = 1;
                 end

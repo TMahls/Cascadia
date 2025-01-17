@@ -29,7 +29,7 @@ classdef SalmonRules < WildlifeScoreObjective
 
     methods (Access = private)
 
-        function groupScore = salmonAShape(obj, environment, groupCoords)
+        function groupScore = salmonAShape(~, ~, groupCoords)
             groupScore = 0;
             scoreTable = [2 5 8 12 16 20 25];
             if isRun(groupCoords)
@@ -42,7 +42,7 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonBShape(obj, environment, groupCoords)
+        function groupScore = salmonBShape(~, ~, groupCoords)
             groupScore = 0;
             scoreTable = [2 4 9 11 17];
             if isRun(groupCoords)
@@ -55,7 +55,7 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonCShape(obj, environment, groupCoords)
+        function groupScore = salmonCShape(~, ~, groupCoords)
             groupScore = 0;
             scoreTable = [0 0 10 12 15];
             if isRun(groupCoords)
@@ -68,24 +68,25 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonDShape(obj, environment, groupCoords)
+        function groupScore = salmonDShape(~, environment, groupCoords)
             groupScore = 0;
             if isRun(groupCoords)
                 runLength = size(groupCoords,1);
 
-                adjacentAnimals = 0;
-                for i = 1:size(groupCoords,1)
-                    % NEED TO KEEP TRACK OF WHICH ANIMALS HAVE ALREADY BEEN
-                    % COUNTED
-                    currTile = tileAtCoords(environment, groupCoords(i,:));
-                    runNeighbors = getAdjacentAnimals(obj, environment, currTile);
-                    
-                    % Remove salmon from neighbor count
-                    runNeighbors(AnimalEnum.Salmon + 1) = 0;
+                adjacentAnimalCoords = [];
+                for i = 1:size(groupCoords,1)                                      
+                    neighborTiles = getNeighborTiles(environment, groupCoords(i,:));
 
-                    adjacentAnimals = adjacentAnimals + sum(runNeighbors);
-                    
+                    for j = 1:length(neighborTiles)
+                        neighborTile = neighborTiles(j);
+                        if ~isempty(neighborTile.WildlifeToken.Animal) && ...
+                                ~ismember(neighborTile.Coordinate, adjacentAnimalCoords, "rows")
+                            adjacentAnimalCoords = [adjacentAnimalCoords; neighborTile.Coordinate];
+                        end
+                    end                   
                 end
+
+                adjacentAnimals = size(adjacentAnimalCoords, 1);
                 
                 groupScore = runLength + adjacentAnimals;
             end
