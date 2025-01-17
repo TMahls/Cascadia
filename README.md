@@ -105,8 +105,13 @@ The build task is built into the project. To re-build the EXE after making
 edits to the code or app:
 1. In the Project Tools menu, select 'Compiler Task Manager'
 2. Open the existing 'StandaloneDesktopApp' task
-3. Click 'Build and Package'
-4. The updated EXE and installer will pop up in the 'Deployment' folder on your computer
+3. (Optional) If you added new files and they were not found by the dependency analyzer,
+add them to the list of custom include files. 
+4. Click 'Build and Package'
+5. The updated EXE and installer will pop up in the 'Deployment' folder on your computer
+6. Commit or discard any changes to the 'main' branch, and switch to the 'Installer' branch
+7. Replace the existing installer with the one you just created in the 'Deployment/package' folder
+8. Commit and push to the 'Installer' branch
 
 
 ## API Documentation

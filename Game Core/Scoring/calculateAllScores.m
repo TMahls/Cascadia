@@ -84,7 +84,7 @@ habitatTotalRow = findRowThatContains(scoreTable, 'Habitat Total');
 scoreTable(habitatTotalRow,:) = sum(scoreTable((wildlifeTotalRow-1):(habitatTotalRow-1),:),1);
 
 % Assume grand total row is at the end
-scoreTable(end,:) = sum(scoreTable([wildlifeTotalRow, habitatTotalRow, natureTokenRow],:),1)
+scoreTable(end,:) = sum(scoreTable([wildlifeTotalRow, habitatTotalRow, natureTokenRow],:),1);
 end
 
 function rowNum = findRowThatContains(table, searchChars)
