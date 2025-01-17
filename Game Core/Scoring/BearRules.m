@@ -13,16 +13,8 @@ classdef BearRules < WildlifeScoreObjective
             bearGroupSizes = calculateBearGroupSizes(obj, environment);
             bearPairs = nnz(bearGroupSizes == 2);
 
-            score = 0;
-            if bearPairs == 1
-                score = 4;
-            elseif bearPairs == 2
-                score = 11;
-            elseif bearPairs == 3
-                score = 19;
-            elseif bearPairs >= 4
-                score = 27;
-            end
+            scoreTable = [4 11 19 27];
+            score = pointsForAttribute(obj, scoreTable, bearPairs);
         end
 
         function groupScore = ruleBShape(obj, ~, groupCoords)

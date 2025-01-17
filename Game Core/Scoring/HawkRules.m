@@ -11,8 +11,7 @@ classdef HawkRules < WildlifeScoreObjective
         end
 
         function score = ruleAScore(obj, environment)
-            score = 0;
-            scoreArray = [2 5 8 11 14 18 22 26];
+            scoreTable = [2 5 8 11 14 18 22 26];
             hawkTiles = getAllAnimalTiles(obj, environment, obj.Animal);
             loneHawkCount = 0;
 
@@ -23,21 +22,13 @@ classdef HawkRules < WildlifeScoreObjective
                 if ~neighborAnimals(obj.Animal + 1)             
                     loneHawkCount = loneHawkCount + 1;
                 end
-
             end
 
-            if loneHawkCount
-                if loneHawkCount > length(scoreArray)
-                    score = scoreArray(end);
-                else
-                    score = scoreArray(loneHawkCount);
-                end
-            end
+            score = pointsForAttribute(obj, scoreTable, loneHawkCount);
         end
 
         function score = ruleBScore(obj, environment)
-            score = 0;
-            scoreArray = [0 5 9 12 16 20 24 28];
+            scoreTable = [0 5 9 12 16 20 24 28];
             hawkTiles = getAllAnimalTiles(obj, environment, obj.Animal);
             loneHawkCount = 0;
 
@@ -52,13 +43,7 @@ classdef HawkRules < WildlifeScoreObjective
                 end
             end
 
-            if loneHawkCount
-                if loneHawkCount > length(scoreArray)
-                    score = scoreArray(end);
-                else
-                    score = scoreArray(loneHawkCount);
-                end
-            end
+            score = pointsForAttribute(obj, scoreTable, loneHawkCount);
         end
 
         function score = ruleCScore(obj, environment)

@@ -27,12 +27,13 @@ classdef FoxRules < WildlifeScoreObjective
 
                 neighborAnimals = getAdjacentAnimals(obj, environment, tile);
 
-                pairIdx = (neighborAnimals == 2); % Number of pairs 
+                pairIdx = (neighborAnimals >= 2); % Number of pairs
+                % Choosing to count trios/larger groups as 1 unique pair
                 
                 % Remove fox pairs 
                 pairIdx(obj.Animal + 1) = 0;
 
-                if any(neighborAnimals == 2)
+                if any(pairIdx)
                     groupScore = groupScore + (2 * nnz(pairIdx) + 1);
                 end
             end
@@ -44,10 +45,10 @@ classdef FoxRules < WildlifeScoreObjective
                 tile = tileAtCoords(environment, groupCoords(i,:));
 
                 neighborAnimals = getAdjacentAnimals(obj, environment, tile);
-                [maxAnimals, idx] = max(neighborAnimals);
-                if idx ~= (obj.Animal + 1) % Don't include foxes
-                    groupScore = groupScore + maxAnimals;
-                end
+                neighborAnimals(obj.Animal + 1) = 0; % Don't include foxes in count
+
+                maxAnimals = max(neighborAnimals);
+                groupScore = groupScore + maxAnimals;
             end
         end
 

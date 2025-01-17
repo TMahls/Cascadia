@@ -106,6 +106,7 @@ classdef WildlifeScoreObjective
         function animalsFound = getAdjacentAnimals(~, environment, tile)
             % Gets list of animals adjacent to a tile. Uses AnimalEnum + 1
             % as index. Ex: numBears = animalList(AnimalEnum.Bear + 1);
+            % Counts number of time animal appears
 
             neighborTiles = getNeighborTiles(environment, tile);
 
@@ -114,8 +115,10 @@ classdef WildlifeScoreObjective
 
             for i = 1:length(neighborTiles)
                 neighborTile = neighborTiles(i);
-                if ~isempty(neighborTile.WildlifeToken.Animal)
-                    animalsFound(neighborTile.WildlifeToken.Animal + 1) = 1;
+                neighborAnimal = neighborTile.WildlifeToken.Animal;
+                if ~isempty(neighborAnimal)
+                    animalsFound(neighborAnimal + 1) = ...
+                        animalsFound(neighborAnimal + 1) + 1;
                 end
             end
         end
