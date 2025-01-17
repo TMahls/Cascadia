@@ -19,9 +19,11 @@ Running the Cascadia App in MATLAB is simple:
 3. Click the 'CascadiaGUI' shortcut to launch the app
 4. Enjoy!
 
-If you just want to install the standalone app (no MATLAB required):
+If you just want to install the standalone Windows app (no MATLAB required):
 
-[TODO]
+1. Switch from the 'main' branch to the 'Installer' branch by clicking the dropdown button
+above.
+2. Follow the README instructions to download the EXE.
 
 ## Folder Structure
 Explanation of folders / files in this repo.
