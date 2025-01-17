@@ -18,16 +18,12 @@ classdef ElkRules < WildlifeScoreObjective
         end
 
         function score = ruleDScore(obj, environment)
-
+            score = 0;
         end
 
-        function groupScore = ruleCShape(obj, environment, groupCoords)
+        function groupScore = ruleCShape(obj, ~, groupCoords)
             scoreTable = [2 4 7 10 14 18 23 28];
-            if size(groupCoords,1) <= length(scoreTable)
-                groupScore = scoreTable(size(groupCoords,1));      
-            else
-                groupScore = scoreTable(end);
-            end
+            groupScore = pointsForAttribute(obj, scoreTable, size(groupCoords,1));  
         end
 
     end

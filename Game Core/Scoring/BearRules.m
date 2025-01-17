@@ -25,11 +25,9 @@ classdef BearRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = ruleBShape(obj, environment, groupCoords)
-            groupScore = 0;
-            if size(groupCoords,1) == 3
-                groupScore = 10;
-            end
+        function groupScore = ruleBShape(obj, ~, groupCoords)
+            scoreTable = [0 0 10];
+            groupScore = pointsForAttribute(obj, scoreTable, size(groupCoords,1));  
         end
 
         function score = ruleCScore(obj, environment)
@@ -42,16 +40,9 @@ classdef BearRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = ruleDShape(obj, environment, groupCoords)
-            groupScore = 0;
-            switch size(groupCoords,1)
-                case 2
-                    groupScore = 5;
-                case 3
-                    groupScore = 8;
-                case 4
-                    groupScore = 13;
-            end
+        function groupScore = ruleDShape(obj, ~, groupCoords)
+            scoreTable = [0 5 8 13];
+            groupScore = pointsForAttribute(obj, scoreTable, size(groupCoords,1));           
         end
     end
 

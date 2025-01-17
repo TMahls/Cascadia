@@ -86,6 +86,23 @@ classdef WildlifeScoreObjective
             end
         end
 
+        function points = pointsForAttribute(~, scoreTable, attribute)
+            % Gives points for a certain attribute based on a score table.
+            % For instance if you get 3 points for a group of size 1, 5 for
+            % a group of size 2, and 7 for a group of size 3, calling
+            % pointsForAttribute([3,5,7],2) returns 5 
+            % pointsForAttribute([3,5,7],0) returns 0
+            % pointsForAttirbute([3,5,7],4) returns 7
+
+            if attribute > length(scoreTable)
+                points = scoreTable(end);
+            elseif attribute > 0
+                points = scoreTable(attribute);
+            else
+                points = 0;
+            end
+        end
+
         function animalsFound = getAdjacentAnimals(~, environment, tile)
             % Gets list of animals adjacent to a tile. Uses AnimalEnum + 1
             % as index. Ex: numBears = animalList(AnimalEnum.Bear + 1);
