@@ -6,11 +6,11 @@ classdef BearRules < WildlifeScoreObjective
     
     methods
         function obj = BearRules()
-
+            obj.Animal = AnimalEnum.Bear;
         end
 
         function bearGroupSizes = calculateBearGroupSizes(obj, env)
-            bearGroupSizes = calculateGroupSizes(obj, env, AnimalEnum.Bear);
+            bearGroupSizes = calculateGroupSizes(obj, env, obj.Animal);
         end
 
         function score = ruleAScore(obj, environment)

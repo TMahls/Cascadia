@@ -7,20 +7,20 @@ classdef HawkRules < WildlifeScoreObjective
     methods
         function obj = HawkRules()
             % Need common methods for 'not adjacent' and hasLineOfSights, with Returning Line of sight coords. 
-
+            obj.Animal = AnimalEnum.Hawk;
         end
 
         function score = ruleAScore(obj, environment)
             score = 0;
             scoreArray = [2 5 8 11 14 18 22 26];
-            hawkTiles = getAllAnimalTiles(obj, environment, AnimalEnum.Hawk);
+            hawkTiles = getAllAnimalTiles(obj, environment, obj.Animal);
             loneHawkCount = 0;
 
             for i = 1:length(hawkTiles)
                 currTile = hawkTiles(i);
                 neighborAnimals = getAdjacentAnimals(obj, environment, currTile);
 
-                if ~neighborAnimals(AnimalEnum.Hawk + 1)             
+                if ~neighborAnimals(obj.Animal + 1)             
                     loneHawkCount = loneHawkCount + 1;
                 end
 
@@ -38,7 +38,7 @@ classdef HawkRules < WildlifeScoreObjective
         function score = ruleBScore(obj, environment)
             score = 0;
             scoreArray = [0 5 9 12 16 20 24 28];
-            hawkTiles = getAllAnimalTiles(obj, environment, AnimalEnum.Hawk);
+            hawkTiles = getAllAnimalTiles(obj, environment, obj.Animal);
             loneHawkCount = 0;
 
             for i = 1:length(hawkTiles)
@@ -47,7 +47,7 @@ classdef HawkRules < WildlifeScoreObjective
 
                 hasLOS = hasLineOfSight(obj, currTile, environment);
 
-                if ~neighborAnimals(AnimalEnum.Hawk + 1) && hasLOS             
+                if ~neighborAnimals(obj.Animal + 1) && hasLOS             
                     loneHawkCount = loneHawkCount + 1;
                 end
             end
@@ -63,7 +63,7 @@ classdef HawkRules < WildlifeScoreObjective
 
         function score = ruleCScore(obj, environment)
             score = 0;
-            hawkTiles = getAllAnimalTiles(obj, environment, AnimalEnum.Hawk);
+            hawkTiles = getAllAnimalTiles(obj, environment, obj.Animal);
             for i = 1:length(hawkTiles)
                 currTile = hawkTiles(i);
                 [~, losCoords] = hasLineOfSight(obj, currTile, environment);
@@ -110,7 +110,7 @@ classdef HawkRules < WildlifeScoreObjective
                     end
 
                     if isLosTile && ~isempty(currTile.WildlifeToken.Animal) && ...
-                            currTile.WildlifeToken.Animal == AnimalEnum.Hawk
+                            currTile.WildlifeToken.Animal == obj.Animal
                         % Line of sight to hawk spotted - check in-between for
                         % blocks by other hawks
 
@@ -121,7 +121,7 @@ classdef HawkRules < WildlifeScoreObjective
                             coordsBetween(n+1,:) = tile.Coordinate + n.*direction;
                             testTile = tileAtCoords(env,  coordsBetween(n+1,:));
                             if ~isempty(testTile.WildlifeToken.Animal) && ...
-                                    (testTile.WildlifeToken.Animal == AnimalEnum.Hawk)
+                                    (testTile.WildlifeToken.Animal == obj.Animal)
                                 blockingHawk = true;
                             end
                         end

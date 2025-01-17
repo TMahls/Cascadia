@@ -6,28 +6,25 @@ classdef FoxRules < WildlifeScoreObjective
 
     methods
         function obj = FoxRules()
-
+            obj.Animal = AnimalEnum.Fox;
         end
 
         function score = ruleAScore(obj, environment)
-            score = pointsForGroups(obj, environment, AnimalEnum.Fox, 'foxAShape');
+            score = pointsForGroups(obj, environment, obj.Animal, 'foxAShape');
         end
 
         function score = ruleBScore(obj, environment)
-            score = pointsForGroups(obj, environment, AnimalEnum.Fox, 'foxBShape');
+            score = pointsForGroups(obj, environment, obj.Animal, 'foxBShape');
         end
 
         function score = ruleCScore(obj, environment)
-            score = pointsForGroups(obj, environment, AnimalEnum.Fox, 'foxCShape');
+            score = pointsForGroups(obj, environment, obj.Animal, 'foxCShape');
         end
 
         function score = ruleDScore(obj, environment)
-            score = pointsForGroups(obj, environment, AnimalEnum.Fox, 'foxDShape');
+            score = pointsForGroups(obj, environment, obj.Animal, 'foxDShape');
         end
 
-    end
-
-    methods (Access = private)
         function groupScore = foxAShape(obj, environment, groupCoords)
             groupScore = 0;
             for i = 1:size(groupCoords,1) % For each fox in the group
@@ -49,7 +46,7 @@ classdef FoxRules < WildlifeScoreObjective
                 pairIdx = (neighborAnimals == 2); % Number of pairs 
                 
                 % Remove fox pairs 
-                pairIdx(AnimalEnum.Fox + 1) = 0;
+                pairIdx(obj.Animal + 1) = 0;
 
                 if any(neighborAnimals == 2)
                     groupScore = groupScore + (2 * nnz(pairIdx) + 1);
@@ -64,7 +61,7 @@ classdef FoxRules < WildlifeScoreObjective
 
                 neighborAnimals = getAdjacentAnimals(obj, environment, tile);
                 [maxAnimals, idx] = max(neighborAnimals);
-                if idx ~= (AnimalEnum.Fox + 1) % Don't include foxes
+                if idx ~= (obj.Animal + 1) % Don't include foxes
                     groupScore = groupScore + maxAnimals;
                 end
             end
@@ -76,8 +73,6 @@ classdef FoxRules < WildlifeScoreObjective
             groupScore = 0;
 
         end
-
-
     end
 
 end

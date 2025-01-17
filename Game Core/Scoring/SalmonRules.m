@@ -6,33 +6,30 @@ classdef SalmonRules < WildlifeScoreObjective
     
     methods
         function obj = SalmonRules()
-
+            obj.Animal = AnimalEnum.Salmon;
         end
 
         function score = ruleAScore(obj, environment)
-            score = pointsForGroups(obj, environment, AnimalEnum.Salmon, 'salmonAShape');
+            score = pointsForGroups(obj, environment, obj.Animal, 'salmonAShape');
         end
 
         function score = ruleBScore(obj, environment)
-            score = pointsForGroups(obj, environment, AnimalEnum.Salmon, 'salmonBShape');
+            score = pointsForGroups(obj, environment, obj.Animal, 'salmonBShape');
         end
 
         function score = ruleCScore(obj, environment)
-            score = pointsForGroups(obj, environment, AnimalEnum.Salmon, 'salmonCShape');
+            score = pointsForGroups(obj, environment, obj.Animal, 'salmonCShape');
         end
 
         function score = ruleDScore(obj, environment)
-            score = pointsForGroups(obj, environment, AnimalEnum.Salmon, 'salmonDShape');
+            score = pointsForGroups(obj, environment, obj.Animal, 'salmonDShape');
         end
         
-    end
 
-    methods (Access = private)
-
-        function groupScore = salmonAShape(~, ~, groupCoords)
+        function groupScore = salmonAShape(obj, environment, groupCoords)
             groupScore = 0;
             scoreTable = [2 5 8 12 16 20 25];
-            if isRun(groupCoords)
+            if isRun(obj, environment, groupCoords)
                 runLength = size(groupCoords,1);
                 if runLength > length(scoreTable)
                     groupScore = scoreTable(end);
@@ -42,10 +39,10 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonBShape(~, ~, groupCoords)
+        function groupScore = salmonBShape(obj, ~, groupCoords)
             groupScore = 0;
             scoreTable = [2 4 9 11 17];
-            if isRun(groupCoords)
+            if isRun(obj, environment, groupCoords)
                 runLength = size(groupCoords,1);
                 if runLength > length(scoreTable)
                     groupScore = scoreTable(end);
@@ -55,10 +52,10 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonCShape(~, ~, groupCoords)
+        function groupScore = salmonCShape(obj, ~, groupCoords)
             groupScore = 0;
             scoreTable = [0 0 10 12 15];
-            if isRun(groupCoords)
+            if isRun(obj, environment, groupCoords)
                 runLength = size(groupCoords,1);
                 if runLength > length(scoreTable)
                     groupScore = scoreTable(end);
@@ -68,9 +65,9 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function groupScore = salmonDShape(~, environment, groupCoords)
+        function groupScore = salmonDShape(obj, environment, groupCoords)
             groupScore = 0;
-            if isRun(groupCoords)
+            if isRun(obj, environment, groupCoords)
                 runLength = size(groupCoords,1);
 
                 adjacentAnimalCoords = [];
@@ -92,15 +89,15 @@ classdef SalmonRules < WildlifeScoreObjective
             end
         end
 
-        function tf = isRun(obj, groupCoords)
+        function tf = isRun(obj, environment, groupCoords)
             % Determines whether a group of animals is a 'run'. Each salmon
             % must have at most 2 neighbor salmon
             tf = true;
             for i = 1:size(groupCoords,1)
                 currTile = tileAtCoords(environment, groupCoords(i,:));
-                runNeighbors = getAdjacentAnimals(obj, environment, currTile);
+                animalsFound = getAdjacentAnimals(obj, environment, currTile);
 
-                if runNeighbors(AnimalEnum.Salmon + 1) > 2
+                if animalsFound(obj.Animal + 1) > 2
                     tf = false;
                 end
             end

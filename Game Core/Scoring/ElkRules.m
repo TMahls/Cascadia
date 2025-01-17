@@ -6,11 +6,11 @@ classdef ElkRules < WildlifeScoreObjective
     
     methods
         function obj = ElkRules()
-
+            obj.Animal = AnimalEnum.Elk;
         end
 
         function elkGroupSizes = calculateElkGroupSizes(obj, env)
-            elkGroupSizes = calculateGroupSizes(obj, env, AnimalEnum.Elk);
+            elkGroupSizes = calculateGroupSizes(obj, env, obj.Animal);
         end
 
         function score = ruleAScore(obj, environment)

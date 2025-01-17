@@ -37,7 +37,7 @@ classdef WildlifeScoreObjective
             end
         end
 
-        function totalPoints = pointsForGroups(~, env, animal, shapeFunc)
+        function totalPoints = pointsForGroups(obj, env, animal, shapeFunc)
             % Iterates through all groups in an environment, and returns
             % the total number of points for a particular rule. 'shapeFunc'
             % is the name of a function that returns the number of
@@ -58,9 +58,9 @@ classdef WildlifeScoreObjective
                         (currTile.WildlifeToken.Animal == animal) && tileNotInList
                     groupCoords = recursiveGetAnimalGroupCoords(env, currTile, animal, currTile.Coordinate);
                     
-                    totalPoints = totalPoints + feval(shapeFunc, env, groupCoords);
+                    totalPoints = totalPoints + feval(shapeFunc, obj, env, groupCoords);
 
-                    overallCoordList = [overallCoordList; groupCoordList];                
+                    overallCoordList = [overallCoordList; groupCoords];                
                 end
             end
         end
@@ -69,7 +69,7 @@ classdef WildlifeScoreObjective
             % Gets list of animals adjacent to a tile. Uses AnimalEnum + 1
             % as index. Ex: numBears = animalList(AnimalEnum.Bear + 1);
 
-            neighborTiles = getNeighborTiles(environment, tile.Coordinate);
+            neighborTiles = getNeighborTiles(environment, tile);
 
             % Array of whether we have found a particular animal
             animalsFound = zeros(1, AnimalEnum.NumAnimals);

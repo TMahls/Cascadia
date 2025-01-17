@@ -71,6 +71,8 @@ classdef HabitatTile
                 end
             end
         end
+
+       
     end
 
     methods (Static)
@@ -121,6 +123,13 @@ classdef HabitatTile
             % Manhattan distance between 2 tiles
             diffVec = coords1 - coords2;
             dist = sum(abs(diffVec)) / 2;
+        end
+
+        function neighborCoords = getNeighborCoordinates(coordinate)
+            % Neighbor coordinates
+            neighborChange = int8([1,0,-1; 0,1,-1; -1,1,0]);
+            neighborChange = [neighborChange; -1.*neighborChange];
+            neighborCoords = coordinate + neighborChange;        
         end
     end
 end
