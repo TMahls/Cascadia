@@ -83,7 +83,7 @@ classdef HawkRules < WildlifeScoreObjective
 
     methods(Access = private)
         function [tf, losCoords] = hasLineOfSight(obj, tile, env)
-            % Determined whether a particular hawk in an environment has
+            % Determines whether a particular hawk in an environment has
             % line of sight with another hawk, and the coordinates of all
             % lines of sight that it has. 
 
@@ -94,7 +94,6 @@ classdef HawkRules < WildlifeScoreObjective
             losCoords = {};
 
             emptyRing = false; N = 2; idx = 1;
-            losDirectionsFound = zeros(6,3);
             while ~emptyRing % If all ring coords empty, we're done. 
                 % Get ring coords
                 ringCoords = getRingCoords(obj,N);
