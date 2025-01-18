@@ -30,6 +30,9 @@ classdef Game
             %GAME Construct an instance of this class
             %   Detailed explanation goes here
 
+            % Shuffle RNG Seed 
+            rng('shuffle');
+
             % Get parameter data store
             obj.GameParameters = GameParameters();
 
