@@ -2,11 +2,16 @@ classdef SalmonRules < WildlifeScoreObjective
 % IMPORTANT NOTE - There are 2 interpretations for how you can score
 % salmon. The first is following the rulebook: 'Each run of salmon may not
 % have any other salmon adjacent to it'. This means if a run is malformed,
-% you get 0 points for the entire group. However, in the following post
+% you get 0 points for the entire group. However, in the following posts
 % Randy Flynn argues that Salmon should be scored differently:
+%
 % https://boardgamegeek.com/thread/2512694/clarification-on-scoring-salmon-run
+% https://boardgamegeek.com/thread/3087149/salmon-scoring-with-1-wrongly-placed-salmon
+% https://boardgamegeek.com/thread/2809804/tiles-and-salmon-scoring
+% https://boardgamegeek.com/thread/2774858/salmon-card-a-clarification
+%
 % His online version also follows this more forgiving scoring-- a salmon
-% group that isn't a run can have violating tokens removed, and smaller
+% group that isn't wholly a run can have violating tokens removed, and smaller
 % runs scored individually. I choose to follow Randy's approach here.
 
     properties
