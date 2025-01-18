@@ -138,6 +138,4 @@ classdef FoxRules < WildlifeScoreObjective
         end
     end
 
-
-
 end
