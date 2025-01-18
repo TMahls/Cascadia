@@ -1,4 +1,13 @@
 classdef SalmonRules < WildlifeScoreObjective
+% IMPORTANT NOTE - There are 2 interpretations for how you can score
+% salmon. The first is following the rulebook: 'Each run of salmon may not
+% have any other salmon adjacent to it'. This means if a run is malformed,
+% you get 0 points for the entire group. However, in the following post
+% Randy Flynn argues that Salmon should be scored differently:
+% https://boardgamegeek.com/thread/2512694/clarification-on-scoring-salmon-run
+% His online version also follows this more forgiving scoring-- a salmon
+% group that isn't a run can have violating tokens removed, and smaller
+% runs scored individually. I choose to follow Randy's approach here.
 
     properties
 
@@ -35,7 +44,7 @@ classdef SalmonRules < WildlifeScoreObjective
 
         function groupScore = ruleDShape(obj, environment, groupCoords)
             groupScore = 0;
-            if isRun(obj, environment, groupCoords)
+            if isRun(obj, environment, groupCoords) && (size(groupCoords,1) >= 3)
                 runLength = size(groupCoords,1);
 
                 adjacentAnimalCoords = [];

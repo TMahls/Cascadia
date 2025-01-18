@@ -165,7 +165,8 @@ classdef WildlifeScoreObjective
                 % (and can handle un-balanced points) but super slow. We
                 % will assume we only want to put the biggest shapes we
                 % can-- this assumes balanced points (4 > 1 + 1 + 1 + 1).
-                % That is, maximizing points / tile. 
+                % That is, maximizing points / tile. This assumption also
+                % only holds when we are scoring down to the unit tile. 
                 shapeList = trimShapeListToLargestShapes(obj, shapeList);
 
                 for j = 1:length(shapeList) % For each shape that starts with that tile
