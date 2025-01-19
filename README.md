@@ -121,13 +121,110 @@ This can be used to develop autoplayer algorithms.
 WARNING: Many of the internal properties and methods in 'Game Core' are 
 not private or protected. Absolutley no attention was paid to security 
 when I was writing this. You could very easily cheat by accessing these
-internal functions, please adhere to the honor system! 
+internal functions, please adhere to the honor system! Only do what you 
+would actually be able to do in the game ;)
 
-[TODO]
-
+### Game Creation
 ``` 
 % Start game
 obj = Game;
 nPlayers = 3;
-obj = obj.startNewGame(nPlayers);
+options.GameMode = GameModeEnum.
+obj = obj.startNewGame(nPlayers, options);
+
+% Alternatively:
+obj.startNewGame(nPlayers, "GameMode", GameModeEnum.EasyRules); 
+
 ```
+Options:
+
+GameMode - GameModeEnum.(EasyRules, RandomRules, FamilyVairant,
+IntermediateVariant, CustomRules):
+
+- EasyRules - All A cards
+
+- Random Rules - Random card for each wildlife
+
+- FamilyVariant / IntermediateVariant - Simpler group-based scoring
+
+- CustomRules - Choose your score cards
+
+CustomRules - String array of which cards you want, only used if your GameMode
+is set to CustomRules. Ex: ["A","A","A","A","A"]
+
+PlayerNames - Not in use yet.
+
+HabitatBonus - True (default) or false depending on if you want habitat bonuses.
+
+### Performing Moves
+To see the current player's available moves:
+
+    actionsArray = obj.Players(obj.CurrentPlayerTurn).AvailableActions;
+
+To perform a move:
+
+    obj = playerAction(obj, MovesEnum.___, moveMetadata);
+
+If the move is not in the available options list, the game status 
+message will reflect that and the move will not execute. 
+
+Move Options:
+- OverpopulationWipe. Auto or voluntary. Metadata: [] 
+
+- SpendNatureToken. Metadata example: {2, [1 3 4]}
+
+If the first element is 1, decouple tile and token selection. 
+If the first element is 2, wipe any tokens using center index in 
+element 2. 
+
+- SelectTile. Metadata example: [3]
+
+Center index of tile to select
+
+- SelectToken. Metadata example: [2]
+
+Center index of token to select
+
+- RotateTile. Metadata example: [1]
+
+Center index of tile to rotate. Rotates clockwise by 60 degrees.
+Can access tile orientation with gameObj.Players(n).Environment.HabitatTiles(m).Orientation.
+
+See 'Game Core/TileOrientationConvention.png'
+
+- PlaceTile. Metadata example: {4,[-1,0,1]}
+
+Center index of tile to place, followed by environment coord.
+
+See 'Game Core/TileCoordinateSystem.png'
+
+- PlaceToken. Metadata example: {3,[-1,0,1]}
+
+Center index of token to place, followed by environment coord. 
+
+- DiscardToken. Metadata example [2]
+
+Center index of token to discard. 
+
+### Environment Building
+
+There are many helpful utility functions in the 'Environment'
+and 'HabitatTile' classes. Use methods() on these to see what 
+you can use. 
+
+### View Game Status
+Some stats on the game:
+
+    status = obj.StatusMsg;
+    
+    currPlayerTurn = obj.PlayerTurn; % 1 thru 4
+
+    gameComplete = obj.GameComplete; % Logical
+
+    turnCount = obj.TurnCount;
+
+### View Scores
+Scores are re-calculated at the end of every player's turn. 
+To view the score table:
+
+    scoreTable = obj.CurrentScores;
