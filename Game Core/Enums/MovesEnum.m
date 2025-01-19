@@ -208,7 +208,7 @@ classdef MovesEnum < uint8
                 for i = 1:length(tokensToWipe)
                     wipedTokenIdx(i) = gameObj.CenterTokenIdx(tokensToWipe(i));
                     gameObj.WildlifeTokens(wipedTokenIdx(i)).Status = StatusEnum.OutOfPlay;
-                    gameObj.CenterTokenIdx(i) = 0;
+                    gameObj.CenterTokenIdx(tokensToWipe(i)) = 0;
                 end
 
                 % Draw replacement tokens
