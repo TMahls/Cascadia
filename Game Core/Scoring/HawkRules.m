@@ -178,7 +178,7 @@ classdef HawkRules < WildlifeScoreObjective
                                 idx = allTilesIdx - length(env.StarterHabitatTile);
                                 env.HabitatTiles(idx).WildlifeToken = WildlifeToken();
                             else
-                                env.StarterHabitatTile(idx).WildlifeToken = WildlifeTRoken();
+                                env.StarterHabitatTile(allTilesIdx).WildlifeToken = WildlifeToken();
                             end
                         else
                             k = k + 1;
