@@ -71,7 +71,7 @@ classdef HawkRules < WildlifeScoreObjective
             % Determines whether a particular hawk in an environment has
             % line of sight with another hawk, and the coordinates of all
             % lines of sight that it has.
-            % lostCoords is a cell array, where eacn entry contains ALL
+            % losCoords is a cell array, where each entry contains ALL
             % coords in the line of sight, not just end points.
 
             % Check in increasing radius -- until when? Until all tiles are

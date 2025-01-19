@@ -31,7 +31,7 @@ classdef GameParameters
         DualTerrainSpreadsheet = 'DualTerrainTileWildlife.xlsx';
 
         % Starter Tile configuration (in row order of TerrainEnum for top Keystone)
-        % Column order: Lower-left tile, lower-right tile
+        % Column order: Top tile, lower-left tile, lower-right tile
         % Technically with just the lower-left and top tile info you can
         % fill in the rest, but with rule changes or terrain additions that
         % may not hold. So I will make it explicit.

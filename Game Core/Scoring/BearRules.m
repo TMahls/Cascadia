@@ -10,7 +10,7 @@ classdef BearRules < WildlifeScoreObjective
         end
 
         function score = ruleAScore(obj, environment)
-            bearGroupSizes = calculateBearGroupSizes(obj, environment);
+            bearGroupSizes = calculateGroupSizes(obj, environment, obj.Animal);
             bearPairs = nnz(bearGroupSizes == 2);
 
             scoreTable = [4 11 19 27];
@@ -23,7 +23,7 @@ classdef BearRules < WildlifeScoreObjective
         end
 
         function score = ruleCScore(obj, environment)
-            bearGroupSizes = calculateBearGroupSizes(obj, environment);
+            bearGroupSizes = calculateGroupSizes(obj, environment, obj.Animal);
             score = 2 * nnz(bearGroupSizes == 1) + 5 * nnz(bearGroupSizes == 2) + ...
                 8 * nnz(bearGroupSizes == 3);
             if any(bearGroupSizes == 1) && any(bearGroupSizes == 2) && ...
@@ -35,12 +35,6 @@ classdef BearRules < WildlifeScoreObjective
         function groupScore = ruleDShape(obj, ~, groupCoords)
             scoreTable = [0 5 8 13];
             groupScore = pointsForAttribute(obj, scoreTable, size(groupCoords,1));           
-        end
-    end
-
-    methods (Access = private)
-        function bearGroupSizes = calculateBearGroupSizes(obj, env)
-            bearGroupSizes = calculateGroupSizes(obj, env, obj.Animal);
         end
     end
 

@@ -46,7 +46,7 @@ classdef MovesEnum < uint8
 
                     if playerObj.SelectedTileIdx ~= 0
                         % Stage 4
-                        moveList = [moveList MovesEnum.SelectToken MovesEnum.RotateTile MovesEnum.PlaceTile];
+                        moveList = [moveList MovesEnum.RotateTile MovesEnum.PlaceTile];
                     end
                 else
                     % Stage 5
@@ -295,35 +295,25 @@ classdef MovesEnum < uint8
         end
 
         function [gameObj, playerObj] = placeWildlifeToken(gameObj, playerObj, tokenIdx, wildlifeToken, coordinate)
+            
             % Find Habitat Tile with that coordinate
-            playerTiles = [playerObj.Environment.StarterHabitatTile playerObj.Environment.HabitatTiles];
-
-            i = 0; tileFound = false; starterTile = false;
-            while i < length(playerTiles) && ~tileFound
-                i = i + 1;
-                if all(playerTiles(i).Coordinate == coordinate)
-                    tile = playerTiles(i);
-                    tileFound = true;
-                    if i <= length(playerObj.Environment.StarterHabitatTile)
-                        starterTile = true;
-                    end
-                end
-            end
-
-            if tileFound % Hopefully this is never false
+            tile = tileAtCoords(playerObj.Environment, coordinate);
+            
+            if ~isempty(tile.Terrain) 
+                allTilesIdx = getTileIdx(playerObj.Environment, tile);
                 if ismember(wildlifeToken.Animal, tile.CompatibleWildlife)
                     % Place wildlife token on it
-                    if starterTile
-                        playerObj.Environment.StarterHabitatTile(i).WildlifeToken = wildlifeToken;
+                    if allTilesIdx <= length(playerObj.Environment.StarterHabitatTile)
+                        playerObj.Environment.StarterHabitatTile(allTilesIdx).WildlifeToken = wildlifeToken;
                     else
-                        idx = i - length(playerObj.Environment.StarterHabitatTile);
+                        idx = allTilesIdx - length(playerObj.Environment.StarterHabitatTile);
                         playerObj.Environment.HabitatTiles(idx).WildlifeToken = wildlifeToken;
                     end
 
                     playerObj.Environment.PreviewToken = WildlifeToken.empty;
 
                     % Increment Nature Token if Keystone
-                    if isKeystoneTile(playerTiles(i))
+                    if isKeystoneTile(tile)
                         [gameObj, playerObj] = takeNatureToken(playerObj, gameObj);
                     end
 
@@ -344,18 +334,7 @@ classdef MovesEnum < uint8
             gameObj.WildlifeTokens(tokenIdx).Status = StatusEnum.Hidden;
             gameObj.CenterTokenIdx(gameObj.CenterTokenIdx == tokenIdx) = 0;
         end
-    end
-
-    methods
-        % We may or may not need this
-        function moveText = getText(obj)
-            switch obj
-                case MovesEnum.OverpopulationWipe
-                    moveText = 'Overpopulation Wipe';
-                otherwise
-                    moveText = '';
-            end
-        end
+        
     end
 end
 

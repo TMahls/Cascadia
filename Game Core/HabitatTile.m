@@ -19,7 +19,7 @@ classdef HabitatTile
             obj.Orientation = 1; 
 
             % Give it a NaN starting coordinate
-            obj.Coordinate = uint8([127,127,127]);
+            obj.Coordinate = int8([127,127,127]);
         end
 
         function tf = isKeystoneTile(obj)
@@ -63,7 +63,6 @@ classdef HabitatTile
             if isKeystoneTile(obj)
                 terrain = obj.Terrain;
             else
-                %if mod(edgeNumber + 6 - obj.Orientation, 6) > 3
                 if mod(obj.Orientation + 6 - edgeNumber, 6) < 3
                     terrain = obj.Terrain(1);
                 else

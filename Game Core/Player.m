@@ -8,12 +8,13 @@ classdef Player
         Name char
 
         AvailableActions MovesEnum % Current legal moves
+        SelectedTileIdx (1,1) uint8 % Center idx of selected tile/token
+        SelectedTokenIdx (1,1) uint8
+
         % Flags used to determine valid moves
         UsedVoluntaryOverpopulationWipe (1,1) logical
         SpentNatureToken (1,1) logical
         DecoupledTileToken (1,1) logical
-        SelectedTileIdx (1,1) uint8
-        SelectedTokenIdx (1,1) uint8
         TilePlaced (1,1) logical
         TokenPlaced (1,1) logical
     end

@@ -55,7 +55,7 @@ classdef Environment
             % 'allTiles' array
             allTiles = [obj.StarterHabitatTile, obj.HabitatTiles];
             allTilesIdx = 0; i = 0; foundTile = false;
-            while i <= length(allTiles) && ~foundTile
+            while i < length(allTiles) && ~foundTile
                 i = i + 1;
                 if all(tile.Coordinate == allTiles(i).Coordinate)
                     foundTile = true;
