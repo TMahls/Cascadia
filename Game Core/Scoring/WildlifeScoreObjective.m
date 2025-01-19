@@ -127,7 +127,7 @@ classdef WildlifeScoreObjective
             % Return list of all tiles in an environment with a certain
             % animal
             allTiles = [env.StarterHabitatTile, env.HabitatTiles];
-            animalTiles = [];
+            animalTiles = HabitatTile.empty;
             for i = 1:length(allTiles)
                 currTile = allTiles(i);
                 if ~isempty(currTile.WildlifeToken.Animal) && ...

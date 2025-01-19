@@ -50,6 +50,23 @@ classdef Environment
             tf = inCurrentEnv;
         end
 
+        function allTilesIdx = getTileIdx(obj, tile)
+            % Given a tile, return the index in the commonly used
+            % 'allTiles' array
+            allTiles = [obj.StarterHabitatTile, obj.HabitatTiles];
+            allTilesIdx = 0; i = 0; foundTile = false;
+            while i <= length(allTiles) && ~foundTile
+                i = i + 1;
+                if all(tile.Coordinate == allTiles(i).Coordinate)
+                    foundTile = true;
+                end
+            end
+
+            if foundTile
+                allTilesIdx = i;
+            end
+        end
+
         function tile = tileAtCoords(obj, hexCoords)
             tile = HabitatTile();
             allTiles = [obj.StarterHabitatTile, obj.HabitatTiles];
