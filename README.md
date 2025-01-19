@@ -129,7 +129,7 @@ would actually be able to do in the game ;)
 % Start game
 obj = Game;
 nPlayers = 3;
-options.GameMode = GameModeEnum.
+options.GameMode = GameModeEnum.EasyRules
 obj = obj.startNewGame(nPlayers, options);
 
 % Alternatively:
@@ -155,6 +155,21 @@ is set to CustomRules. Ex: ["A","A","A","A","A"]
 PlayerNames - Not in use yet.
 
 HabitatBonus - True (default) or false depending on if you want habitat bonuses.
+
+### Tiles and Tokens
+To view the game's tiles and tokens:
+
+```
+obj.HabitatTiles;
+
+obj.WildlifeTokens;
+
+numHiddenTiles = countTiles(obj, StatusEnum.InPlay);
+
+secondCenterToken = obj.WildlifeTokens(obj.CenterTokenIdx(2));
+
+```
+
 
 ### Performing Moves
 To see the current player's available moves:
