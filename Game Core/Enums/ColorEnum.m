@@ -23,7 +23,7 @@ classdef ColorEnum
         DarkBlue ([36, 39, 255]./255)
         LightGreen ([107, 219, 46]./255)
         DarkGreen ([34, 69, 30]./255)
-        Grey ([92, 91, 90]./255)
+        Grey ([160, 160, 160]./255)
         Yellow ([204, 163, 0]./255)
 
         % Animals
