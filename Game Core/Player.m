@@ -44,6 +44,8 @@ classdef Player
             if ~isempty(nextTokenIdx)
                 gameObj.NatureTokens(nextTokenIdx) = gameObj.PlayerTurn;
                 playerObj.NatureTokens = playerObj.NatureTokens + 1;
+            else
+                gameObj.StatusMsg = 'No Nature Tokens available!';
             end
         end
 
