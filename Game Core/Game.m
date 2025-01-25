@@ -15,6 +15,7 @@ classdef Game
         % 0 indicates empty center
 
         TurnCount uint8 % How many turns has the game gone?
+        RemainingTurns uint8 % How many turns remain
         PlayerTurn uint8 % Whose turn is it?
         StatusMsg char % Current game status
 
@@ -112,6 +113,7 @@ classdef Game
             % Start game
             obj.GameComplete = false;
             obj.TurnCount = 1;
+            obj.RemainingTurns = updateRemainingTurns(obj);
             obj.PlayerTurn = 1;
             obj.CurrentScores = obj.GameParameters.initScoreTable(obj.Players);
             obj.StatusMsg = 'Game started!';
@@ -158,23 +160,24 @@ classdef Game
                         % Replace Center
                         if length(obj.Players) ~= 1
                             obj = replaceCenterNormal(obj);
-                            turnsRemaining = countTiles(obj, StatusEnum.Hidden) + 1;
                         else
                             obj = replaceCenterSolo(obj);
-                            turnsRemaining = (countTiles(obj, StatusEnum.Hidden) + 1)/2;
-                        end                       
+                        end
 
                         % Prepare for next player's turn
                         obj.TurnCount = obj.TurnCount + 1;
+                        obj.RemainingTurns = updateRemainingTurns(obj);
+
                         obj.PlayerTurn = mod(obj.PlayerTurn, length(obj.Players)) + 1;
                         obj.StatusMsg = sprintf('Player %d''s Turn. %d Turns Remaining', obj.PlayerTurn, ...
-                            turnsRemaining);
+                            obj.RemainingTurns);
                         [obj, obj.Players(obj.PlayerTurn)] = ...
                             obj.Players(obj.PlayerTurn).getAvailableActions(obj);
                     end
                 else
                     if isempty(obj.StatusMsg)
-                        obj.StatusMsg = sprintf('Player %d Continues Turn', obj.PlayerTurn);
+                        obj.StatusMsg = sprintf('Player %d Continues Turn. %d Turns Remaining', ...
+                            obj.PlayerTurn, obj.RemainingTurns);
                     end
                 end
                 % Most of the time update old player, except at end of turn
@@ -242,6 +245,14 @@ classdef Game
                 if obj.WildlifeTokens(i).Status == status
                     nTokens = nTokens + 1;
                 end
+            end
+        end
+
+        function remainingTurns = updateRemainingTurns(obj)
+            if length(obj.Players) ~= 1
+                remainingTurns = countTiles(obj, StatusEnum.Hidden) + 1;
+            else
+                remainingTurns = (countTiles(obj, StatusEnum.Hidden) + 1)/2;
             end
         end
     end

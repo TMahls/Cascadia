@@ -9,6 +9,7 @@ classdef GameParameters
         DualTerrainTilesPerCombo = 6; % Number of each terrain combo
         CenterTiles = 4; % How many tiles (and tokens) in the center
         StarterTiles = 5;
+        NTurns = 20; % How many turns does the game last per player
 
         % What terrains each animal appears on (in row order of AnimalEnum)
         % Format - Major (2 keystone), Major (2 keystone), Minor (1 keystone + starter)
@@ -60,11 +61,11 @@ classdef GameParameters
             %   Detailed explanation goes here
         end
 
-        function numTiles = habitatTilesForNPlayers(~, nPlayer)
+        function numTiles = habitatTilesForNPlayers(obj, nPlayer)
             if nPlayer == 1
                 nPlayer = 2; % Follow 2 player setup for solo mode
             end
-            numTiles = nPlayer * 20 + 3;
+            numTiles = nPlayer * obj.NTurns + 3;
         end
 
         function numTiles = calculateTotalHabitatTiles(obj)

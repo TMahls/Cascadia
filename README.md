@@ -1,5 +1,6 @@
 # Cascadia
-Cascadia board game implemented in MATLAB.
+Cascadia board game implemented in MATLAB. Credit to Randy Flynn for the creation 
+and development of the game.
 
 This app was developed in R2025a but should work for previous releases,
 at least back to 2020.

@@ -3,7 +3,7 @@ classdef Autoplayer < Player
     %   Detailed explanation goes here
 
     properties
-        
+        Difficulty 
     end
 
     methods

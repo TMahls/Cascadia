@@ -113,9 +113,13 @@ classdef MovesEnum < uint8
 
                 case MovesEnum.DiscardToken
                     tokenCenterIdx = moveMetadata;
-                    tokenGameIdx = gameObj.CenterTokenIdx(tokenCenterIdx);
 
-                    [gameObj, playerObj] = MovesEnum.discardWildlifeToken(gameObj, playerObj, tokenGameIdx);
+                    if tokenCenterIdx ~= 0
+                        tokenGameIdx = gameObj.CenterTokenIdx(tokenCenterIdx);
+                        [gameObj, playerObj] = MovesEnum.discardWildlifeToken(gameObj, playerObj, tokenGameIdx);
+                    else
+                        gameObj.StatusMsg = 'No token selected to discard!';
+                    end
             end
         end
 
