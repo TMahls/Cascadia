@@ -1,4 +1,5 @@
-projectRoot = "C:\Users\Tyler\Documents\MATLAB\Personal Fun Stuff\Cascadia";
+projectRoot = matlab.project.rootProject;
+projectRoot = projectRoot.RootFolder;
 
 % Create target build options object, set build properties and build.
 buildOpts = compiler.build.StandaloneApplicationOptions(fullfile(projectRoot, "Game UI", "CascadiaGUI.mlapp"));
