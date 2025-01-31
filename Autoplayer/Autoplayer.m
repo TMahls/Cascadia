@@ -4,12 +4,16 @@ classdef Autoplayer < Player
 
     properties
         Difficulty 
+        Game
     end
 
     methods
-        function obj = Autoplayer()
+        function obj = Autoplayer(gameObj)
             %PLAYER Construct an instance of this class
             %   Detailed explanation goes here
+
+            % Set up scheduled game probing
+            F = parfeval(backgroundPool,probeGame,numFcnOut,X1,...,Xm);
            
         end
 

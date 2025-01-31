@@ -1,4 +1,4 @@
-classdef Game
+classdef Game < handle
     %GAME Summary of this class goes here
     %   Detailed explanation goes here
 
