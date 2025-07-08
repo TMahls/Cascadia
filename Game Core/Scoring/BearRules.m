@@ -18,7 +18,7 @@ classdef BearRules < WildlifeScoreObjective
         end
 
         function groupScore = ruleBShape(obj, ~, groupCoords)
-            scoreTable = [0 0 10];
+            scoreTable = [0 0 10 0]; % Trailing zero - no points for larger than 3
             groupScore = pointsForAttribute(obj, scoreTable, size(groupCoords,1));  
         end
 
@@ -33,7 +33,7 @@ classdef BearRules < WildlifeScoreObjective
         end
 
         function groupScore = ruleDShape(obj, ~, groupCoords)
-            scoreTable = [0 5 8 13];
+            scoreTable = [0 5 8 13 0]; % Trailing zero - no points for larger than 4
             groupScore = pointsForAttribute(obj, scoreTable, size(groupCoords,1));           
         end
     end
