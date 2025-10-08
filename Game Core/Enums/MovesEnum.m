@@ -299,13 +299,17 @@ classdef MovesEnum < uint8
         end
 
         function [gameObj, playerObj] = placeWildlifeToken(gameObj, playerObj, tokenIdx, wildlifeToken, coordinate)
-            
+
             % Find Habitat Tile with that coordinate
             tile = tileAtCoords(playerObj.Environment, coordinate);
-            
-            if ~isempty(tile.Terrain) 
+            if ~isempty(tile.WildlifeToken.Animal)
+                gameObj.StatusMsg = 'Tile already has a token on it';
+            elseif isempty(tile.Terrain)
+                gameObj.StatusMsg = 'Invalid coordinate for token!';
+            else
                 allTilesIdx = getTileIdx(playerObj.Environment, tile);
                 if ismember(wildlifeToken.Animal, tile.CompatibleWildlife)
+
                     % Place wildlife token on it
                     if allTilesIdx <= length(playerObj.Environment.StarterHabitatTile)
                         playerObj.Environment.StarterHabitatTile(allTilesIdx).WildlifeToken = wildlifeToken;
@@ -328,8 +332,6 @@ classdef MovesEnum < uint8
                 else
                     gameObj.StatusMsg = 'Token not compatible on this tile';
                 end
-            else
-                gameObj.StatusMsg = sprintf('Invalid coordinate for token!\n');
             end
         end
 
